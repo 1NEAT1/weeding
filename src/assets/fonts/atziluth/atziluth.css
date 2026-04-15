@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'Atziluth';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local('Atziluth Script'),
+    local('Atziluth-Script'),
+    url('./Atziluth-Script.ttf') format('truetype');
+}

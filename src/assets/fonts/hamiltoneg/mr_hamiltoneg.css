@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'mr_HamiltoneG';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./mr_hamiltoneg.eot'); /* IE 9 Compatibility Mode */
+  src:
+    url('./mr_hamiltoneg.eot?#iefix') format('embedded-opentype'),
+    /* IE < 9 */
+    url('./mr_hamiltoneg.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('./mr_hamiltoneg.woff') format('woff'),
+    /* Firefox >= 3.6, any other modern browser */
+    url('./mr_hamiltoneg.ttf') format('truetype'),
+    /* Safari, Android, iOS */
+    url('./mr_hamiltoneg.svg#mr_hamiltoneg') format('svg'); /* Chrome < 4, Legacy iOS */
+}
