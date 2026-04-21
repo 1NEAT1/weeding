@@ -1,78 +1,92 @@
 @use './reset';
-@use './fonts';
+@use './fonts' as *;
 
+$color-cream: #FFF8EC;
 
-.title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 150px;
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-.title_item {
+.hero {
   position: relative;
+  padding: 150px 0 150px 0;
+  background-color: $color-cream;
+}
+
+.hero__deco {
+  position: absolute;
+  max-width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero__deco--left {
+  left: 0;
+  top: -50px;
+}
+
+.hero__deco--right {
+  top: -120px;
+  right: 0;
+}
+
+.titles {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  position: relative;
 
-  .title_item_wordw {
-    position: relative;
-    left: 50px;
-    font-family: 'Playfair Display', serif;
-    font-size: 83px;
-    font-weight: 400;
-    letter-spacing: 0.09em;
-    line-height: 0.8;
-    color: #594236;
-    opacity: 0.25;
-    -webkit-text-stroke: 8px #594236;
-    paint-order: stroke fill;
-    margin: 0;
-    text-transform: uppercase;
+  &__item {
+    &:last-child {
+      margin-top: -85px;
+    }
   }
 
-    .title_item_wordd {
-    position: relative;
-    left: -15px;
-    font-family: 'Playfair Display', serif;
-    font-size: 83px;
-    font-weight: 400;
-    letter-spacing: 0.09em;
-    line-height: 0.8;
-    color: #594236;
-    opacity: 0.25;
-    -webkit-text-stroke: 8px #594236;
-    paint-order: stroke fill;
-    margin: 0;
-    text-transform: uppercase;
+  &__letter {
+    font-family: $font-hamiltoneg;
   }
 
-  .title_item_name {
+  &__name {
     position: relative;
-    left: -135px;
-    font-family: 'Atziluth', serif;
+    font-family: $font-atziluth;
     font-size: 130px;
     font-weight: 400;
+    letter-spacing: 0.04em;
     color: #594236;
     line-height: 1.1;
     margin: 0;
-    margin-top: -73px;
+    top: 80px;
+  }
 
-    span {
-      font-family: 'mr_HamiltoneG', serif;
+  &__inside {
+    position: relative;
+    font-family: $font-playfair;
+    font-size: 83px;
+    font-weight: 400;
+    letter-spacing: 0.09em;
+    line-height: 0.8;
+    color: #594236;
+    opacity: 0.25;
+    -webkit-text-stroke: 5px #594236;
+    paint-order: stroke fill;
+    bottom: 75px;
+    left: 165px;
+    &:last-child {
+      left: 200px;
     }
   }
 }
 
 .date {
-  position: relative;
-  left: -100px;
   font-size: 25px;
   color: #594236;
   text-align: center;
-  margin-top: 55px;
-  font-family: 'Source Serif Pro', serif;
+  margin-top: 90px;
+  font-family: $font-sourceserifpro;
   letter-spacing: 5px;
   -webkit-text-stroke: 1px #594236;
 }
