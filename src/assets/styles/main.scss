@@ -2,18 +2,22 @@
 @use './fonts' as *;
 
 $color-cream: #FFF8EC;
+$photo-size: 369px;
+$photo-gap: 17px;
 
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+
 }
 
 .hero {
   position: relative;
-  padding: 150px 0 150px 0;
+  padding: 150px 0 250px 0;
   background-color: $color-cream;
+  overflow: visible; 
 }
 
 .hero__deco {
@@ -39,6 +43,7 @@ $color-cream: #FFF8EC;
   flex-direction: column;
   align-items: center;
   position: relative;
+  z-index: 5; 
 
   &__item {
     &:last-child {
@@ -89,4 +94,53 @@ $color-cream: #FFF8EC;
   font-family: $font-sourceserifpro;
   letter-spacing: 5px;
   -webkit-text-stroke: 1px #594236;
+  z-index: 5;
+}
+
+.timeline {
+  background-color: #594236;
+  position: relative;
+  padding-top: 0;
+  overflow: visible;
+
+    .container {
+    padding-top: calc(#{$photo-size} + #{$photo-gap} + 30px);
+  }
+
+  &__photos {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    top: -250px;
+    display: grid;
+    grid-template-columns: $photo-size $photo-size;
+    gap: $photo-gap;
+    background-color: #594236;
+    z-index: 2;
+    padding: 17px;  
+  }
+
+  &__photo {
+    width: 369px;
+    height: 369px;
+    aspect-ratio: 1;  
+    object-fit: cover;     
+    display: block;
+  }
+
+  &__title {
+    font-size: 65px;
+    font-family: $font-atziluth;
+    color: #CCDDE2;
+    text-align: center;
+  }
+
+  &__subtitle {
+    font-size: 21px;
+    color: #FFF8EC;
+    font-family: $font-felidae;
+    text-align: center;
+  }
 }
