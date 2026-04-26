@@ -3,5 +3,13 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('./Felidae.ttf') format('ttf');
+  src: url('./Felidae.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Felidae';
+  font-style: light;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./Felidae.ttf') format('truetype');
 }
