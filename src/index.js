@@ -1,5 +1,5 @@
 import './assets/styles/main.scss';
-import './main.js';
+import './assets/js/main.js';
 
 
 
