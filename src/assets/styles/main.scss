@@ -215,29 +215,35 @@ $photo-gap: 17px;
     position: absolute;
 
     &--top {
-      bottom: 585px;
+      bottom: 600px;
+      left: 360px;
     }
 
     &--bottom {
-      bottom: -170px;
-      left: 280px;
+      bottom: -155px;
+      left: 330px;
     }
   }
 
-  &__timing {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 70px;
-    margin: 100px 0 150px 0;
-  }
+    &__timing {
+      display: block;
+      width: 100%;
+      margin: 100px 0 150px 0;
+    }
 
-  &__item {
-    &-time {
+    &__item {
+      width: 520px;
+      max-width: 100%;
+      margin: 0 auto 70px;
+      text-align: left;
+      padding-left: 145px;
+    
+      &-time {
       font-size: 30px;
       color: #FFF8EC;
       font-family: $font-felidae;
       padding-left: 20px;
+      letter-spacing: 0.1em;
     }
 
     &-title {
@@ -251,8 +257,8 @@ $photo-gap: 17px;
       font-size: 19px;
       color: #FFF8EC;
       font-family: $font-felidae;
-      padding-left: 20px;
       letter-spacing: 0.1em;
+      padding-left: 20px;
     }
   }
 }
