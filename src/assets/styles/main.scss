@@ -827,8 +827,8 @@ $photo-gap: 17px;
 
     img {
       display: block;
-      width: 35px;
-      height: 35px;
+      width: 57px;
+      height: 57px;
       object-fit: cover;
     }
 
@@ -838,6 +838,11 @@ $photo-gap: 17px;
       gap: 4px;
       justify-content: center;
       justify-items: center;
+
+      img {
+        width: 35px;
+        height: 35px;
+      }
 
       img:nth-child(7) {
         grid-column: 2;
