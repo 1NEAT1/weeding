@@ -48,6 +48,14 @@ $photo-gap: 17px;
   &__item {
     &:last-child {
       margin-top: -85px;
+
+      @media screen and (max-width: 992px) {
+        margin-top: -55px;
+      }
+
+      @media screen and (max-width: 768px) {
+        margin-top: -35px;
+      }
     }
   }
 
@@ -65,6 +73,22 @@ $photo-gap: 17px;
     line-height: 1.1;
     margin: 0;
     top: 80px;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 110px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 90px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 70px;
+    }
+
+    @media screen and (max-width: 576px) {
+      font-size: 55px;
+    }
   }
 
   &__inside {
@@ -82,7 +106,35 @@ $photo-gap: 17px;
     left: 165px;
 
     &:last-child {
-      left: 200px;
+      left: 120px;
+
+      @media screen and (max-width: 768px) {
+        left: 100px;
+      }
+
+      @media screen and (max-width: 576px) {
+        left: 80px;
+      }
+    }
+
+    @media screen and (max-width: 1200px) {
+      font-size: 70px;
+      bottom: 45px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 55px;
+      bottom: 30px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 45px;
+      bottom: 5px;
+    }
+
+    @media screen and (max-width: 576px) {
+      font-size: 35px;
+      bottom: -10px;
     }
   }
 }
@@ -96,15 +148,36 @@ $photo-gap: 17px;
   letter-spacing: 5px;
   -webkit-text-stroke: 1px #594236;
   z-index: 5;
+
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    letter-spacing: 3px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
 }
 
 .timeline {
   background-color: #594236;
   position: relative;
   overflow: visible;
+  --timeline-photo-size: clamp(140px, 22vw, #{$photo-size});
+  --timeline-photo-gap: clamp(10px, 1.6vw, #{$photo-gap});
+  --timeline-photos-padding: clamp(12px, 1.6vw, 17px);
 
   .container {
-    padding-top: calc(#{$photo-size} + #{$photo-gap} + 30px);
+    padding-top: calc(var(--timeline-photo-size) + var(--timeline-photo-gap) + 30px);
   }
 
   &__deco {
@@ -118,18 +191,20 @@ $photo-gap: 17px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    top: -390px;
+    top: calc(-1 * (var(--timeline-photo-size) + var(--timeline-photos-padding) + 4px));
     display: grid;
-    grid-template-columns: $photo-size $photo-size;
-    gap: $photo-gap;
+    grid-template-columns: repeat(2, var(--timeline-photo-size));
+    gap: var(--timeline-photo-gap);
     background-color: #594236;
     z-index: 2;
-    padding: 17px;
+    padding: var(--timeline-photos-padding);
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
   }
 
   &__photo {
-    width: 369px;
-    height: 369px;
+    width: var(--timeline-photo-size);
+    height: var(--timeline-photo-size);
     aspect-ratio: 1;
     object-fit: cover;
     display: block;
@@ -143,6 +218,26 @@ $photo-gap: 17px;
     margin-top: 200px;
     line-height: 0.9;
     letter-spacing: 0.03em;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 55px;
+      margin-top: 150px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 45px;
+      margin-top: 70px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 35px;
+      margin-top: 50px;
+    }
+
+    @media screen and (max-width: 576px) {
+      font-size: 26px;
+      margin-top: 35px;
+    }
   }
 
   &__subtitle {
@@ -150,9 +245,25 @@ $photo-gap: 17px;
     color: #FFF8EC;
     font-family: $font-felidae;
     text-align: center;
-    margin: 30px 0 30px 0;
+    margin: 10px 0 20px 0;
     letter-spacing: 0.05em;
     -webkit-text-stroke: 0.1px #FFF8EC;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 18px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 15px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 13px;
+    }
+
+    @media screen and (max-width: 576px) {
+      font-size: 10px;
+    }
   }
 
   &__calendar {
@@ -162,8 +273,60 @@ $photo-gap: 17px;
     text-align: center;
     max-width: 310px;
     margin: 0 auto;
-    gap: 18px 0;
+    gap: 18px;
     -webkit-text-stroke: 0.1px #FFF8EC;
+
+    @media screen and (max-width: 1200px) {
+      gap: 14px;
+      max-width: 250px;
+    }
+
+    @media screen and (max-width: 992px) {
+      gap: 12px;
+      max-width: 200px;
+    }
+
+    @media screen and (max-width: 768px) {
+      gap: 10px;
+      max-width: 140px;
+    }
+
+    &-date--11 {
+      position: relative;
+    }
+
+    &-date--11::after {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 30px;
+      width: 123px;
+      height: 101px;
+      transform: translate(-50%, -50%);
+      background: url('../images/heart-line.png') center / contain no-repeat;
+      pointer-events: none;
+
+      @media screen and (max-width: 992px) {
+        left: 8px;
+        top: 22px;
+        width: 90px;
+        height: 80px;
+      }
+
+      @media screen and (max-width: 768px) {
+        left: 5px;
+        top: 15px;
+        width: 70px;
+        height: 60px;
+      }
+
+      @media screen and (max-width: 576px) {
+        left: 5px;
+        top: 15px;
+        width: 60px;
+        height: 50px;
+      }
+    }
 
     &-day {
       font-size: 16px;
@@ -171,6 +334,22 @@ $photo-gap: 17px;
       color: #FFF8EC;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 12px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 10px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 7px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 5px;
+      }
     }
 
     &-date {
@@ -179,6 +358,22 @@ $photo-gap: 17px;
       color: #FFF8EC;
       letter-spacing: 0.1em;
       margin-bottom: 80px;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 12px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 10px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 7px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 5px;
+      }
     }
 
     &-icon {
@@ -225,32 +420,108 @@ $photo-gap: 17px;
     }
   }
 
-    &__timing {
-      display: block;
-      width: 100%;
-      margin: 100px 0 150px 0;
+  &__timing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 100px 0 150px 0;
+    gap: 70px;
+
+    @media screen and (max-width: 1200px) {
+      margin: 80px 0 130px 0;
     }
 
-    &__item {
-      width: 520px;
-      max-width: 100%;
-      margin: 0 auto 70px;
-      text-align: left;
-      padding-left: 145px;
-    
-      &-time {
+    @media screen and (max-width: 992px) {
+      margin: 60px 0 100px 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      margin: 40px 0 60px 0;
+    }
+
+    @media screen and (max-width: 576px) {
+      margin: 20px 0 30px 0;
+    }
+  }
+
+  &__item {
+    width: min(520px, 100%);
+    margin: 0;
+    text-align: left;
+    padding-inline: 0;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 576px) {
+      padding-inline: 0;
+    }
+
+    &-time {
       font-size: 30px;
       color: #FFF8EC;
       font-family: $font-felidae;
-      padding-left: 20px;
+      padding-left: 0;
       letter-spacing: 0.1em;
+      text-align: center;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding-inline: 20px;
+      box-sizing: border-box;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 26px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 22px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 18px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 14px;
+      }
+
+      @media screen and (max-width: 576px) {
+        max-width: calc(100% - 24px);
+        padding-inline: 12px;
+      }
     }
 
     &-title {
       font-size: 45px;
       color: #CCDDE2;
       font-family: $font-atziluth;
-      margin-bottom: 15px;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 15px;
+      padding-inline: 20px;
+      box-sizing: border-box;
+      text-align: center;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 38px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 32px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 26px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 20px;
+      }
+
+      @media screen and (max-width: 576px) {
+        max-width: calc(100% - 24px);
+        padding-inline: 12px;
+      }
     }
 
     &-text {
@@ -258,7 +529,34 @@ $photo-gap: 17px;
       color: #FFF8EC;
       font-family: $font-felidae;
       letter-spacing: 0.1em;
-      padding-left: 20px;
+      padding-left: 0;
+      text-align: center;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding-inline: 20px;
+      box-sizing: border-box;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 16px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 14px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 12px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 10px;
+      }
+
+      @media screen and (max-width: 576px) {
+        max-width: calc(100% - 24px);
+        padding-inline: 12px;
+      }
     }
   }
 }
@@ -267,18 +565,34 @@ $photo-gap: 17px;
   background-color: #594236;
   padding-bottom: 150px;
 
+  @media screen and (max-width: 992px) {
+    padding-bottom: 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-bottom: 100px;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-bottom: 80px;
+  }
+
   &__card {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     justify-content: center;
     gap: 20px;
+    flex-wrap: nowrap;
   }
 
   &__item {
     border-radius: 15px;
+    overflow: hidden;
     padding: 15px;
-    width: 459px;
+    width: min(470px, 100%);
+    max-width: 470px;
     height: 366px;
+    flex: 0 1 470px;
 
     &:first-child {
       background-color: #CCDDE2;
@@ -302,19 +616,36 @@ $photo-gap: 17px;
       margin-bottom: 10px;
       -webkit-text-stroke: 0.4px #594236;
       letter-spacing: 0.05em;
-      
+      width: 100%;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 23px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 20px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 18px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 16px;
+      }
+
       &::after {
         content: "";
         display: block;
-        width: 393px;
+        width: 100%;
         height: 2px;
         background-color: #000000;
-        margin: 3px auto 0;
+        margin: 3px 0 0;
         opacity: 0.15;
       }
     }
 
-    &-adress {
+    &-address {
       font-size: 23px;
       font-family: $font-felidae;
       font-weight: light;
@@ -322,11 +653,28 @@ $photo-gap: 17px;
       margin-bottom: 60px;
       -webkit-text-stroke: 0.1px #594236;
       letter-spacing: 0.05em;
+      width: 100%;
 
-       &::after {
+      @media screen and (max-width: 1200px) {
+        font-size: 23px;
+      }
+
+      @media screen and (max-width: 992px) {
+        font-size: 20px;
+      }
+
+      @media screen and (max-width: 768px) {
+        font-size: 18px;
+      }
+
+      @media screen and (max-width: 576px) {
+        font-size: 16px;
+      }
+
+      &::after {
         content: "";
         display: block;
-        width: 393px;
+        width: 100%;
         height: 2px;
         background-color: #000000;
         margin: 3px auto 0;
@@ -335,17 +683,27 @@ $photo-gap: 17px;
     }
   }
 
+  &__photo,
   &__background {
     display: block;
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
   }
 
   &__content {
     text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    height: 100%;
+  }
+
+  &__meta {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
   }
 
@@ -371,10 +729,44 @@ $photo-gap: 17px;
   }
 }
 
+@media (max-width: 992px) {
+  .location {
+    &__card {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__item {
+      flex-basis: auto;
+      width: min(470px, 100%);
+      max-width: 470px;
+      height: 366px;
+    }
+
+    &__photo,
+    &__background {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+  }
+}
+
 .dresscode {
   background-color: $color-cream;
   position: relative;
   padding-top: 150px;
+
+  @media screen and (max-width: 992px) {
+    padding-top: 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-top: 100px;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-top: 80px;
+  }
 
   &__flower {
     position: absolute;
@@ -391,6 +783,14 @@ $photo-gap: 17px;
     color: #594236;
     font-family: $font-atziluth;
     text-align: center;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 50px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 42px;
+    }
   }
 
   &__subtitle {
@@ -400,13 +800,46 @@ $photo-gap: 17px;
     margin: 10px 0 35px 0;
     text-align: center;
     -webkit-text-stroke: 0.2px #594236;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 17px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 15px;
+      margin: 10px 0 28px 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 13px;
+      margin: 10px 0 22px 0;
+    }
   }
 
   &__palitra {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 4px;
     margin-bottom: 35px;
+
+    img {
+      display: block;
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+    }
+
+    @media screen and (max-width: 576px) {
+      display: grid;
+      grid-template-columns: repeat(3, 35px);
+      gap: 4px;
+      justify-content: center;
+      justify-items: center;
+
+      img:nth-child(7) {
+        grid-column: 2;
+      }
+    }
   }
 
   &__text {
@@ -415,6 +848,18 @@ $photo-gap: 17px;
     font-family: $font-felidae;
     text-align: center;
     -webkit-text-stroke: 0.2px #594236;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 15px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 11px;
+    }
   }
 }
 
@@ -422,19 +867,47 @@ $photo-gap: 17px;
   padding-top: 115px;
   background-color: $color-cream;
 
+  @media screen and (max-width: 992px) {
+    padding-top: 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-top: 100px;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-top: 80px;
+  }
+
   &__title {
     font-size: 60px;
     color: #594236;
     font-family: $font-atziluth;
     text-align: center;
     margin-bottom: 60px;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 50px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 42px;
+    }
   }
 
   &__cards {
     display: grid;
     grid-template-columns: repeat(2, 450px);
     grid-auto-rows: 404px;
+    gap: 60px;
     justify-content: center;
+
+    @media screen and (max-width: 992px) {
+      grid-template-columns: 1fr;
+      grid-auto-rows: 404px;
+      gap: 20px;
+      justify-items: center;
+    }
   }
 
   &__item {
@@ -442,7 +915,11 @@ $photo-gap: 17px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-radius: 15px;
+    box-shadow: 0 16px 18px -10px rgba(0, 0, 0, 0.45);
     $item: &;
+    width: 100%;
+    max-width: 450px;
 
     &-title {
       font-size: 47px;
@@ -480,7 +957,23 @@ $photo-gap: 17px;
 
 .guest {
   background-color: $color-cream;
+  padding-top: 115px;
   padding-bottom: 150px;
+
+  @media screen and (max-width: 992px) {
+    padding-top: 115px;
+    padding-bottom: 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
 
   .container {
     max-width: 600px;
@@ -491,6 +984,14 @@ $photo-gap: 17px;
     color: #594236;
     font-family: $font-atziluth;
     text-align: center;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 50px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 42px;
+    }
   }
 
   &__subtitle {
@@ -500,6 +1001,20 @@ $photo-gap: 17px;
     text-align: center;
     margin-top: 25px;
     -webkit-text-stroke: 0.3px #594236;
+
+    @media screen and (max-width: 1200px) {
+      font-size: 17px;
+    }
+
+    @media screen and (max-width: 992px) {
+      font-size: 15px;
+      margin-top: 15px;
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: 13px;
+      margin-top: 10px;
+    }
   }
 
   &__profile {
@@ -761,6 +1276,21 @@ $photo-gap: 17px;
 .info {
   padding: 150px 0 150px 0;
 
+  @media screen and (max-width: 992px) {
+    padding-top: 115px;
+    padding-bottom: 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
   .container {
     text-align: center;
   }
@@ -768,22 +1298,24 @@ $photo-gap: 17px;
   &__contact {
     position: relative;
     display: block;
-    width: fit-content;
+    width: min(450px, 100%);
     margin: 0 auto;
 
     &-card {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      width: clamp(280px, 30vw, 450px);
+      width: 100%;
+      max-width: 450px;
       aspect-ratio: 450 / 404;
       background-image: url('../images/contact.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      padding: 100px 0 0 30px;
+      padding: clamp(70px, 10vw, 100px) 0 0 clamp(18px, 3vw, 30px);
       -webkit-text-stroke: 0.2px #594236;
       line-height: 1.5;
+      box-sizing: border-box;
     }
 
     &-text {
@@ -824,7 +1356,7 @@ $photo-gap: 17px;
   &__line {
     position: absolute;
     top: 360px;
-    left: -35px;
+    left: -37px;
   }
 
   &__heart {
