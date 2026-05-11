@@ -8,21 +8,19 @@
 </head>
 <body>
 <section class="hero">
-    <!--    <img class="hero__deco hero__deco&#45;&#45;right" src="assets/images/topflower.png" alt="">-->
-    <!--    <img class="hero__deco hero__deco&#45;&#45;left" src="assets/images/topline.svg" alt="">-->
+     <img class="hero__deco hero__deco&#45;&#45;left" src="assets/images/topline.svg" alt="">
+     <img class="hero__deco hero__deco&#45;&#45;leftmob" src="assets/images/toplinemob.svg" alt="">
+     <img class="hero__deco hero__deco&#45;&#45;leftmini" src="assets/images/toplinemini.svg" alt="">
+     <img class="hero__deco hero__deco&#45;&#45;leftmid" src="assets/images/toplinemid.svg" alt="">
     <div class="container">
         <div class="titles">
             <div class="titles__item">
-                <div class="titles__name">
-                    <span class="titles__letter">А</span>лександр
-                </div>
+                <div class="titles__name">Александр</div>
                 <div class="titles__inside">Wedding</div>
             </div>
 
             <div class="titles__item">
-                <div class="titles__name">
-                    <span class="titles__letter">А</span>лина
-                </div>
+                <div class="titles__name">Алина</div>
                 <div class="titles__inside">Day</div>
             </div>
         </div>
@@ -39,7 +37,10 @@
         <img class="timeline__photo" src="assets/images/topphoto2.png" alt="">
         <img class="timeline__photo" src="assets/images/topphoto.png" alt="">
     </div>
-    <!--    <img class="timeline__deco" src="assets/images/topline2.svg" alt="">-->
+    <img class="timeline__deco timeline__deco--desktop" src="assets/images/topline2.svg" alt="">
+    <img class="timeline__deco timeline__deco--mobile" src="assets/images/topline3.svg" alt="">
+    <img class="timeline__deco timeline__deco--mini" src="assets/images/topline4.svg" alt="">
+    <img class="timeline__deco timeline__deco--mid" src="assets/images/topline5.svg" alt="">
     <div class="container">
         <div class="timeline__title">
             Дорогие <br> Семен и Анастасия!
@@ -63,10 +64,11 @@
             <div class="timeline__calendar-date">12</div>
             <div class="timeline__calendar-date">13</div>
         </div>
-        <!--        <img class="timeline__flower timeline__flower&#45;&#45;right" src="assets/images/midflower.png" alt="">-->
         <div class="timeline__timing">
-            <!--            <img class="timeline__line timeline__line&#45;&#45;top" src="assets/images/midline.svg" alt="">-->
-            <!--            <img class="timeline__flower timeline__flower&#45;&#45;left" src="assets/images/midflower2.png" alt="">-->
+            <img class="timeline__line timeline__line--top" src="assets/images/midline.svg" alt="">
+            <img class="timeline__line timeline__line--topmob" src="assets/images/midline-mob.svg" alt="">
+            <img class="timeline__line timeline__line--topmini" src="assets/images/midline-mini.svg" alt="">
+            <img class="timeline__line timeline__line--topmid" src="assets/images/midline-mid.svg" alt="">
             <div class="timeline__item">
                 <div class="timeline__item-time">13:30</div>
                 <div class="timeline__item-title">Сбор гостей</div>
@@ -82,18 +84,20 @@
                 <div class="timeline__item-title">Банкет</div>
                 <div class="timeline__item-text">Время для вкусной еды,<br>смеха и танцев</div>
             </div>
-            <!--            <img class="timeline__line timeline__line&#45;&#45;bottom" src="assets/images/midline2.svg" alt="">-->
+            <img class="timeline__line timeline__line--bottom" src="assets/images/midline2.svg" alt="">
+            <img class="timeline__line timeline__line--bottommob" src="assets/images/midline2-mob.svg" alt="">
+            <img class="timeline__line timeline__line--bottommini" src="assets/images/midline2-mini.svg" alt="">
+            <img class="timeline__line timeline__line--bottommid" src="assets/images/midline2-mid.svg" alt="">
             <div class="timeline__item">
                 <div class="timeline__item-time">19:00</div>
                 <div class="timeline__item-title">Торт</div>
-                <div class="timeline__item-text">Самая сладкая часть вечера</div>
+                <div class="timeline__item-text">Самая сладкая<br>часть вечера</div>
             </div>
             <div class="timeline__item">
                 <div class="timeline__item-time">22:00</div>
                 <div class="timeline__item-title">Окончание вечера</div>
-                <div class="timeline__item-text">Даже такой прекрасный вечер может<br> закончится, однако, не
-                    спешите<br>
-                    расходиться - у вас будет лаундж-час<br> для душевных разговоров
+                <div class="timeline__item-text">Даже такой прекрасный вечер<br> может закончится, однако,<br> не
+                    спешите расходиться - у вас<br> будет лаундж-час<br> для душевных разговоров
                 </div>
             </div>
         </div>
@@ -122,7 +126,6 @@
 </section>
 <section class="dresscode">
     <div class="container">
-        <!--        <img class="dresscode__flower" src="assets/images/dressflower.png" alt="">-->
         <div class="dresscode__title">Дресс-код</div>
         <div class="dresscode__subtitle">Мы очень старались сделать праздник<br>красивым и нам будет особенно приятно
             видеть вас<br>в нарядах цветовой гаммы нашей свадьбы
@@ -241,6 +244,14 @@
                     </label>
                 </div>
             </div>
+            <div class="guest__formname guest__formname--allergy">
+                <div class="guest__formname-fio">Укажите, если у вас есть аллергии<br>или ограничения по еде</div>
+                <input
+                        class="form-input"
+                        type="text"
+                        name="Аллергия"
+                        data-tilda-req="1">
+            </div>
             <a class="guest__button" href="#">Отправить</a>
         </div>
     </div>
@@ -254,8 +265,7 @@
                     доверили в&nbsp;руки&nbsp;нашего координатора:&nbsp;<span>Александры</span></p>
                 <a class="info__contact-button" href="#">Написать</a>
             </div>
-<!--            <img class="info__line" src="assets/images/bottomline.svg" alt="">-->
-<!--            <img class="info__heart" src="assets/images/bottomheart.png" alt="">-->
+               <img class="info__line" src="assets/images/bottomline.svg" alt="">
             <div class="info__title">До свадьбы</div>
             <div class="info__subtitle">Осталось...</div>
             <div class="info__countdown">
