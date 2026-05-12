@@ -19,6 +19,10 @@ $photo-gap: 17px;
   background-color: $color-cream;
   overflow: visible;
 
+    @media screen and (max-width: 1200px) {
+        padding: 75px 0 315px 0;
+    }
+
     @media screen and (max-width: 992px) {
         padding: 85px 0 285px 0;
     }
@@ -55,8 +59,26 @@ $photo-gap: 17px;
     &--leftmid {
       display: none;
     }
+
+    &--leftbig {
+      display: none;
+    }
   }
 }
+
+  @media (min-width: 993px) and (max-width: 1200px) {
+    .hero__deco--left { display: none; }
+    .hero__deco--leftmob { display: none; }
+    .hero__deco--leftmini { display: none; }
+    .hero__deco--leftmid { display: none; }
+    .hero__deco--leftbig {
+      display: block;
+      left: -10px;
+      top: 0px;
+      height: 980px;
+    }
+  }
+
   @media (min-width: 767px) and (max-width: 992px) {
     .hero__deco--left { display: none; }
     .hero__deco--leftmob { display: none; }
@@ -164,6 +186,11 @@ $photo-gap: 17px;
     &:last-child {
       left: 200px;
 
+      @media screen and (max-width: 1200px) {
+        left: 180px;
+        line-height: 0.6;
+    }
+
       @media screen and (max-width: 992px) {
         left: 150px;
         line-height: 0.8;
@@ -179,7 +206,7 @@ $photo-gap: 17px;
 
     @media screen and (max-width: 1200px) {
       font-size: 70px;
-      bottom: 45px;
+      bottom: 59px;
     }
 
     @media screen and (max-width: 992px) {
@@ -210,6 +237,7 @@ $photo-gap: 17px;
 
   @media screen and (max-width: 1200px) {
     font-size: 26px;
+    margin: 80px 0 35px 0;
   }
 
   @media screen and (max-width: 992px) {
@@ -240,7 +268,11 @@ $photo-gap: 17px;
   --timeline-photos-padding: clamp(12px, 1.6vw, 17px);
   padding-bottom: 1px;
 
-    @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1200px) {
+      --timeline-photo-size: clamp(157px, 31vw, #{$photo-size});
+    }
+
+  @media screen and (max-width: 992px) {
       --timeline-photo-size: clamp(157px, 36vw, #{$photo-size});
     }
   
@@ -282,13 +314,29 @@ $photo-gap: 17px;
       right: 0;
       z-index: 3;
     }
+
+    &--big {
+      display: none;
+      top: 337px;
+      right: 0;
+      z-index: 3;
+    }
   }
 
-    @media screen and (min-width: 767px) and (max-width: 992px) {
+  @media screen and (min-width: 993px) and (max-width: 1024px) {
+    .timeline__deco--desktop { display: none; }
+    .timeline__deco--mobile  { display: none; }
+    .timeline__deco--mini    { display: none; }
+    .timeline__deco--mid     { display: none; }
+    .timeline__deco--big     { display: block; }
+  }
+  
+  @media screen and (min-width: 767px) and (max-width: 992px) {
     .timeline__deco--desktop { display: none; }
     .timeline__deco--mobile  { display: none; }
     .timeline__deco--mini    { display: none; }
     .timeline__deco--mid     { display: block; }
+    .timeline__deco--big     { display: none; }
   }
 
   @media screen and (min-width: 577px) and (max-width: 768px) {
@@ -296,6 +344,7 @@ $photo-gap: 17px;
     .timeline__deco--mobile  { display: none; }
     .timeline__deco--mini    { display: block; }
     .timeline__deco--mid     { display: none; }
+    .timeline__deco--big     { display: none; }
   }
 
     @media screen and (max-width: 576px) {
@@ -303,6 +352,7 @@ $photo-gap: 17px;
     .timeline__deco--mobile  { display: block; }
     .timeline__deco--mini    { display: none; }
     .timeline__deco--mid     { display: none; }
+    .timeline__deco--big     { display: none; }
   }
 
   &__photos {
@@ -430,6 +480,10 @@ $photo-gap: 17px;
       background: url('../images/heart-line.png') center / contain no-repeat;
       pointer-events: none;
 
+      @media screen and (max-width: 1200px) {
+        left: 14px;
+      }
+
       @media screen and (max-width: 992px) {
         left: 12px;
         top: 27px;
@@ -501,6 +555,28 @@ $photo-gap: 17px;
     }
   }
 
+.draw-line {
+  path,
+  line,
+  polyline {
+    stroke-dasharray: var(--line-length, 1000);
+    stroke-dashoffset: var(--line-length, 1000);
+    opacity: 0;
+    transition:
+      stroke-dashoffset 5.5s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.4s ease;
+  }
+
+  &.visible {
+    path,
+    line,
+    polyline {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+}
+
   &__line {
     position: absolute;
 
@@ -521,6 +597,10 @@ $photo-gap: 17px;
         display: none;
       }
 
+       &--topbig {
+        display: none;
+      }
+
     &--bottom {
       bottom: -2px;
       left: -20px;
@@ -537,6 +617,31 @@ $photo-gap: 17px;
       &--bottommid {
         display: none;
       }
+
+
+      &--bottombig {
+        display: none;
+      }
+  }
+
+    @media (min-width: 923px) and (max-width: 1200px) {
+    .timeline__line--top { display: none; }
+    .timeline__line--topmob { display: none; }
+    .timeline__line--topmini { display: none; }
+    .timeline__line--topmid { display: none; }
+    .timeline__line--topbig { 
+      top: 898px;
+      display: block;
+      }
+    .timeline__line--bottom { display: none; }
+    .timeline__line--bottommob { display: none; }
+    .timeline__line--bottommini { display: none; }
+    .timeline__line--bottommid { display: none; }
+    .timeline__line--bottombig { 
+      bottom: -4px;
+      left: -90px;
+      display: block;
+     }
   }
 
     @media (min-width: 767px) and (max-width: 922px) {
@@ -547,6 +652,7 @@ $photo-gap: 17px;
       top: 870px;
       display: block;
      }
+    .timeline__line--topbig { display: none; }
     .timeline__line--bottom { display: none; }
     .timeline__line--bottommob { display: none; }
     .timeline__line--bottommini { display: none; }
@@ -555,6 +661,7 @@ $photo-gap: 17px;
       left: 0px;
       display: block;
     }
+    .timeline__line--bottombig { display: none; }
   }
 
     @media (min-width: 577px) and (max-width: 768px) {
@@ -565,6 +672,7 @@ $photo-gap: 17px;
       display: block;
     }
     .timeline__line--topmid { display: none; }
+    .timeline__line--topbig { display: none; }
     .timeline__line--bottom { display: none; }
     .timeline__line--bottommob { display: none; }
     .timeline__line--bottommini {
@@ -573,11 +681,14 @@ $photo-gap: 17px;
       display: block;
     }
     .timeline__line--bottommid { display: none; }
+    .timeline__line--bottombig { display: none; }
   }
 
     @media screen and (max-width: 576px) {
     .timeline__line--top { display: none; }
+    .timeline__line--topmini { display: none; }
     .timeline__line--topmid { display: none; }
+    .timeline__line--topbig { display: none; }
     .timeline__line--bottom {  display: none; }
     .timeline__line--topmob {
       top: 542px;
@@ -588,6 +699,7 @@ $photo-gap: 17px;
       left: -4px;
       display: block;
     }
+    .timeline__line--bottombig { display: none; }
   }
 
     @media screen and (max-width: 390px) {
@@ -629,7 +741,7 @@ $photo-gap: 17px;
     gap: 70px;
 
     @media screen and (max-width: 1200px) {
-      margin: 80px 0 130px 0;
+      margin: 80px 0 95px 0;
     }
 
     @media screen and (max-width: 992px) {
@@ -675,7 +787,7 @@ $photo-gap: 17px;
       margin-bottom: 5px;
 
       @media screen and (max-width: 1200px) {
-        font-size: 26px;
+        font-size: 27px;
       }
 
       @media screen and (max-width: 992px) {
@@ -710,7 +822,7 @@ $photo-gap: 17px;
       letter-spacing: 0.05em;
 
       @media screen and (max-width: 1200px) {
-        font-size: 38px;
+        font-size: 39px;
       }
 
       @media screen and (max-width: 992px) {
@@ -746,7 +858,7 @@ $photo-gap: 17px;
       box-sizing: border-box;
 
       @media screen and (max-width: 1200px) {
-        font-size: 16px;
+        font-size: 17px;
       }
 
       @media screen and (max-width: 992px) {
@@ -772,6 +884,10 @@ $photo-gap: 17px;
 .location {
   background-color: #594236;
   padding-bottom: 150px;
+
+  @media screen and (max-width: 1200px) {
+    padding-bottom: 100px;
+  }
 
   @media screen and (max-width: 992px) {
     padding-bottom: 68px;
@@ -931,7 +1047,6 @@ $photo-gap: 17px;
     font-size: 16px;
     text-decoration: none;
     border-radius: 15px;
-    border: 1px solid #FFF8EC;
     transition: all 0.3s ease;
     cursor: pointer;
     -webkit-text-stroke: 0.2px #594236;
@@ -940,7 +1055,7 @@ $photo-gap: 17px;
     &:hover {
       background-color: #FFF8EC;
       color: #594236;
-      border-color: #594236;
+      border: 1px solid #594236;
     }
 
     @media (max-width: 992px) {
@@ -1017,6 +1132,12 @@ $photo-gap: 17px;
     background-repeat: no-repeat;
     z-index: 1;
     pointer-events: none;
+
+    @media (max-width: 1200px) {
+      top: -32px;
+      height: 155px;
+      background-image: url('../images/wave-lightbig.svg');
+   }
 
     @media (max-width: 922px) {
       top: -1px;
@@ -1149,6 +1270,10 @@ $photo-gap: 17px;
 .details {
   padding-top: 115px;
   background-color: $color-cream;
+
+  @media screen and (max-width: 1200px) {
+    padding-top: 70px;
+  }
 
   @media screen and (max-width: 992px) {
     padding-top: 55px;
@@ -1292,6 +1417,10 @@ $photo-gap: 17px;
 .guest {
   background-color: $color-cream;
   padding: 115px 0 325px 0;
+
+  @media screen and (max-width: 1200px) {
+    padding: 115px 0 175px 0;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 115px 0 120px 0;
@@ -1656,6 +1785,12 @@ $photo-gap: 17px;
     background-repeat: no-repeat;
     z-index: 1;
     pointer-events: none;
+
+    @media screen and (max-width: 1200px) {
+      top: -146px;
+      height: 150px;
+      background-image: url('../images/wave-darkbig.svg');
+    }
 
     @media screen and (max-width: 922px) {
       top: -100px;

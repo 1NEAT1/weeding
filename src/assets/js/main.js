@@ -40,3 +40,34 @@
     setInterval(updateCountdown, 1000);
   });
 })();
+
+(function() {
+  function setLineStyles(svgElement) {
+    const paths = svgElement.querySelectorAll('path, line, polyline');
+    paths.forEach(path => {
+      const length = path.getTotalLength();
+
+      path.style.setProperty('--line-length', length);
+      path.setAttribute('stroke-dasharray', length);
+      path.setAttribute('stroke-dashoffset', length);
+    });
+  }
+
+  const lines = document.querySelectorAll('.draw-line');
+  lines.forEach(setLineStyles);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+
+      entry.target.classList.toggle('visible', entry.isIntersecting);
+    });
+  }, {
+    threshold: 0.4
+  });
+
+  lines.forEach(svg => observer.observe(svg));
+
+  window.addEventListener('resize', () => {
+    lines.forEach(setLineStyles);
+  });
+})();
