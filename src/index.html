@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Wedding</title>
+    <link rel="icon" href="assets/images/favicon.png" type="image/png"/>
+    <title>A | A 11.09.26</title>
 </head>
 <body>
+<div class="guest__alert" id="guest-form-alert" role="alert" aria-live="assertive" hidden></div>
 <section class="hero">
      <svg class="hero__deco hero__deco--left draw-line desktop" width="960" height="837" viewBox="0 0 960 837" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M577.283 1.50022C545.64 204.487 401.781 594.603 79.5023 531.177C2.82461 516.085 -60.2688 407.72 108.357 346.076C264.969 295.381 744.374 359.562 958.291 834.762" stroke="#594236" stroke-width="3" stroke-linecap="round"/>
@@ -53,8 +54,8 @@
      <path d="M0.594238 48.9146C134.594 147.915 370.574 225.092 642.084 178.592C913.594 132.092 1163.59 0.884156 1163.59 0.884156" stroke="#CCDDE2" stroke-width="2"/>
     </svg>
     <div class="container">
-        <div class="timeline__title">
-            Дорогие <br> Семен и Анастасия!
+        <div class="timeline__title" id="timeline-guest-title">
+            Дорогой Гость!
         </div>
         <div class="timeline__subtitle">
             Этот день станет особенным для нас,<br> и мы хотим разделить его с теми,<br>кто дорог нашему сердцу - с вами
@@ -76,9 +77,14 @@
             <div class="timeline__calendar-date">13</div>
         </div>
         <div class="timeline__timing">
-           <svg class="timeline__line timeline__line--top draw-line" width="2560" height="1092" viewBox="0 0 2560 1092" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M-32.4999 -282C-32.4999 -95.5001 -88.9732 421.445 328.047 542.538C745.067 663.632 1056.05 337.538 1324.05 396.038C1441.16 421.601 1512.62 511.024 1453.05 614.038C1381.05 738.538 1229.32 596.511 1141.55 664.538C1061.55 726.538 1079 869.539 1242.05 869.539C1520.91 869.539 1635 753.462 1880 811.5C2125 869.539 2272 1300.5 2746.5 962" stroke="#CCDDE2" stroke-width="2"/>
-           </svg>
+            <svg class="timeline__deco timing-line timing-line--wide draw-line" width="511" height="1370" viewBox="0 0 511 1370" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M32.4405 0.624634C-21.5593 68.1246 -2.05927 130.625 60.9407 145.625C123.941 160.625 164.643 110.539 267.984 121.662C420.94 138.125 476.932 304.76 383.936 370.125C290.94 435.489 204.388 326.124 81.9361 376.625C-27.4778 421.748 -34.6122 599.125 212.936 599.125C460.484 599.125 458.936 855.311 280.936 822.125C102.936 788.938 28.9317 936.125 104.936 1001.12C180.941 1066.12 251.411 984.312 404.226 1083.77C530.226 1165.78 563.726 1350.77 389.726 1465.77" stroke="#CCDDE2" stroke-width="2"/>
+            </svg>
+
+            <svg class="timeline__deco timing-line timing-line--md draw-line" width="377" height="1083" viewBox="0 0 377 1083" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M23.9506 0.461182C-15.9171 50.296 -1.52037 96.4394 44.9922 107.514C91.5047 118.588 121.555 81.6105 197.851 89.8223C310.778 101.977 352.116 225.002 283.458 273.261C214.799 321.519 150.898 240.776 60.4929 278.06C-20.2867 311.374 -25.554 442.33 157.209 442.33C339.973 442.33 338.83 631.471 207.413 606.97C75.9973 582.468 21.3601 691.135 77.4738 739.124C133.587 787.114 185.615 726.712 298.438 800.141C391.463 860.685 416.196 997.265 287.732 1082.17" stroke="#CCDDE2" stroke-width="1.47659"/>
+            </svg>
+
             <div class="timeline__item">
                 <div class="timeline__item-time">13:30</div>
                 <div class="timeline__item-title">Сбор гостей</div>
@@ -94,9 +100,6 @@
                 <div class="timeline__item-title">Банкет</div>
                 <div class="timeline__item-text">Время для вкусной еды,<br>смеха и танцев</div>
             </div>
-            <svg class="timeline__line timeline__line--bottom draw-line" width="1542" height="551" viewBox="0 0 1542 551" fill="none" xmlns="http://www.w3.org/2000/svg">
-             <path d="M1131 641.353C957 526.353 990.5 341.359 1116.5 259.354C1269.32 159.896 1446.94 266.85 1520.44 195.35C1593.94 123.85 1454.02 -6.67648 1276.94 1.35405C1099.87 9.38458 1028 111.353 884.5 243.353C741 375.353 579.5 425.853 281.5 277.853C-16.5 129.853 -166 348.854 -289 548.354" stroke="#CCDDE2" stroke-width="2"/>
-            </svg>
             <div class="timeline__item">
                 <div class="timeline__item-time">19:00</div>
                 <div class="timeline__item-title">Торт</div>
@@ -182,9 +185,9 @@
     <div class="container">
         <div class="guest__title">Анкета гостя</div>
         <div class="guest__subtitle">Мы будем рады, если вы подтвердите<br>свое присутствие до 11.08.2026</div>
-        <div class="guest__profile">
-            <div class="guest__formname">
-                <div class="guest__formname-fio">Ваше имя и фамилия</div>
+        <form class="guest__profile guest__form" id="guest-form" novalidate>
+            <div class="guest__formname" data-field="name">
+                <label class="guest__formname-fio" for="guest-name">Ваше имя и фамилия</label>
                 <div class="guest__formname-discription">если вы будете с парой или семьей,<br>то за каждого гостя
                     анкета
                     заполняется отдельно
@@ -192,77 +195,86 @@
                 <input
                         class="form-input"
                         type="text"
-                        name="Ваше имя и фамилия"
+                        id="guest-name"
+                        name="name"
+                        autocomplete="name"
                         placeholder="Ваше имя и фамилия"
-                        data-tilda-req="1">
+                        required
+                        minlength="1">
             </div>
-            <div class="guest__formattend">
-                <div class="guest__formattend-title">Ваше присутствие на торжестве?</div>
+            <fieldset class="guest__formattend">
+                <legend class="guest__formattend-title">Ваше присутствие на торжестве?</legend>
                 <div class="input-radio">
-                    <label for="id" class="input-radio__label">
+                    <label class="input-radio__label">
                         <input
                                 type="radio"
-                                id="id"
-                                name="name"
-                                value="value"
+                                id="guest-attendance-yes"
+                                name="attendance"
+                                value="yes"
                                 checked
                                 class="input-radio__input"/>
                         <span class="input-radio__indicator">Да, с удовольствием приду!</span>
                         <input
                                 type="radio"
-                                id="id"
-                                name="name"
-                                value="value"
+                                id="guest-attendance-no"
+                                name="attendance"
+                                value="no"
                                 class="input-radio__input"/>
                         <span class="input-radio__indicator">К сожалению, не смогу присутствовать.</span>
                     </label>
                 </div>
-            </div>
-            <div class="guest__formalco">
-                <div class="guest__formalco-title">Что предпочитаете из напитков?</div>
+            </fieldset>
+            <fieldset class="guest__formalco" data-field="drink">
+                <legend class="guest__formalco-title">Что предпочитаете из напитков?</legend>
                 <div class="guest__formalco-list">
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="red-wine"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Вино красное</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="white-wine"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Вино белое</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="champagne"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Шампанское</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="vodka"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Водка</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="whiskey"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Виски</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox"/>
+                        <input type="checkbox" name="drink" value="non-alcoholic"/>
                         <span class="checkbox-indicator"></span>
                         <span class="checkbox-text">Безалкогольные напитки</span>
                     </label>
                 </div>
-            </div>
+            </fieldset>
             <div class="guest__formname guest__formname--allergy">
-                <div class="guest__formname-fio">Укажите, если у вас есть аллергии<br>или ограничения по еде</div>
+                <label class="guest__formname-fio" for="guest-allergy">Укажите, если у вас есть аллергии<br>или ограничения по еде</label>
                 <input
                         class="form-input"
                         type="text"
-                        name="Аллергия"
-                        data-tilda-req="1">
+                        id="guest-allergy"
+                        name="allergy"
+                        autocomplete="off"
+                        placeholder="">
             </div>
-            <a class="guest__button" href="#">Отправить</a>
-        </div>
+            <p class="guest__form-success" data-form-success role="status" hidden></p>
+            <button type="submit" class="guest__button">
+                <span class="guest__button-text">Отправить</span>
+                <span class="guest__button-spinner" aria-hidden="true"></span>
+            </button>
+        </form>
     </div>
 </section>
 <section class="info">
@@ -272,7 +284,7 @@
                 <p class="info__contact-text">Мы&nbsp;будем очень волноваться
                     на&nbsp;свадьбе, поэтому все вопросы
                     доверили в&nbsp;руки&nbsp;нашего координатора:&nbsp;<span>Александры</span></p>
-                <a class="info__contact-button" href="#">Написать</a>
+                <a class="info__contact-button" href="https://t.me/Gordeeva_Events" target="_blank">Написать</a>
             </div>
                <svg class="info__line draw-line" width="409" height="284" viewBox="0 0 409 284" fill="none" xmlns="http://www.w3.org/2000/svg">
                  <path d="M371.367 219.444C405.064 215.783 418.606 239.78 388.574 237.052C390.61 267.139 366.932 253.049 371.368 219.445" stroke="#FFF8EC" stroke-width="1.08992" stroke-linecap="round"/>

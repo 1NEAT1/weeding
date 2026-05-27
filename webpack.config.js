@@ -44,6 +44,11 @@ module.exports = (env, argv) => {
             from: path.join(__dirname, 'src', 'assets', 'images'),
             to: 'assets/images',
           },
+          {
+            from: path.join(__dirname, 'public'),
+            to: '.',
+            noErrorOnMissing: true,
+          },
         ],
       }),
       new HtmlWebpackPlugin({
@@ -62,6 +67,7 @@ module.exports = (env, argv) => {
       compress: true,
       port: 8081,
       hot: true,
+      historyApiFallback: true,
       watchFiles: ['src/**/*'],
     },
     devtool: isProd ? 'source-map' : 'eval-source-map',

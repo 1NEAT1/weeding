@@ -1,3 +1,9 @@
+import { applyGuestPersonalization } from './guests.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyGuestPersonalization();
+});
+
 (function() {
   document.addEventListener('DOMContentLoaded', function() {
 
@@ -42,103 +48,44 @@
 })();
 
 (function() {
+  function clampDrawProgress(scrollY, start, end, maxScroll) {
+    const safeEnd = Math.min(end, maxScroll);
+    if (safeEnd <= start) {
+      const fallbackSpan = Math.max(1, maxScroll - start);
+      return Math.max(0, Math.min(1, (scrollY - start) / fallbackSpan));
+    }
+    const span = Math.max(1, safeEnd - start);
+    return Math.max(0, Math.min(1, (scrollY - start) / span));
+  }
+
+  /** info__line: прогресс по положению в viewport, без привязки к maxScroll. */
+  function getInfoLineDrawProgress(svg) {
+    const rect = svg.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const startTop = vh * 1.05;
+    const endTop = vh * 0.88;
+    const span = Math.max(1, startTop - endTop);
+    return Math.max(0, Math.min(1, (startTop - rect.top) / span));
+  }
+
   /** Доля отрисовки 0…1: растёт при скролле вниз по мере приближения блока к верху экрана. */
   function getDrawProgress(svg) {
+    if (svg.classList.contains('info__line')) {
+      return getInfoLineDrawProgress(svg);
+    }
+
     const rect = svg.getBoundingClientRect();
     const scrollY = window.scrollY || document.documentElement.scrollTop;
     const vh = window.innerHeight;
     const elementTop = rect.top + scrollY;
-    // Окно скролла: p=1 чуть раньше, чтобы линия успевала дорисоваться до «уезда» вниз
-    const start = elementTop - vh * 1.02;
-    const idealEnd = elementTop + vh * 0.08;
     const maxScroll = Math.max(
       0,
       document.documentElement.scrollHeight - window.innerHeight
     );
-    // У хвоста страницы idealEnd недостижим — сжимаем до maxScroll, чтобы внизу p доходила до 1
-    const end = Math.min(idealEnd, maxScroll);
-    if (end <= start) {
-      return maxScroll <= 0 ? 1 : Math.min(1, scrollY / maxScroll);
-    }
-    const span = Math.max(1, end - start);
-    return Math.max(0, Math.min(1, (scrollY - start) / span));
-  }
 
-  function isDrawLineLayoutVisible(svg) {
-    return Boolean(svg && svg.getClientRects().length > 0);
-  }
-
-  /** После «открытия» этапа: 0 сразу после гейта, 1 когда raw дошёл до 1. */
-  function remapProgressAfterGate(raw, anchor) {
-    const span = 1 - anchor;
-    if (span <= 1e-5) {
-      return raw >= 1 - 1e-5 ? 1 : 0;
-    }
-    return Math.max(0, Math.min(1, (raw - anchor) / span));
-  }
-
-
-  /**
-   * Цепочка таймлайна: desktop-деко → верхняя → нижняя.
-   * Якорь: в момент завершения предыдущей линии фиксируем raw следующей,
-   * чтобы она визуально начиналась с 0, а не с уже «прокрученного» конца.
-   */
-  function computeTimelineChainProgress(chain, s) {
-    const { deco, top, bottom } = chain;
-    const decoVis = isDrawLineLayoutVisible(deco);
-    const topVis = isDrawLineLayoutVisible(top);
-    const bottomVis = isDrawLineLayoutVisible(bottom);
-
-    const pDecoRaw = decoVis ? getDrawProgress(deco) : 1;
-    const pDecoDraw = decoVis ? pDecoRaw : 0;
-    const decoDone = !decoVis || pDecoRaw >= 1;
-
-    if (!decoDone) {
-      s.decoWasDone = false;
-      s.anchorTop = null;
-      s.topWasDone = false;
-      s.anchorBottom = null;
-      return { deco: pDecoDraw, top: 0, bottom: 0 };
-    }
-
-    if (!s.decoWasDone) {
-      s.anchorTop = topVis ? getDrawProgress(top) : 0;
-      s.decoWasDone = true;
-    }
-
-    const rawTop = topVis ? getDrawProgress(top) : 0;
-    const pTopDraw = topVis ? remapProgressAfterGate(rawTop, s.anchorTop) : 0;
-    const topGate = !topVis || pTopDraw >= 1 - 1e-3;
-
-    if (!topGate) {
-      s.topWasDone = false;
-      s.anchorBottom = null;
-      return { deco: pDecoDraw, top: pTopDraw, bottom: 0 };
-    }
-
-    if (!s.topWasDone) {
-      s.anchorBottom = bottomVis ? getDrawProgress(bottom) : 0;
-      s.topWasDone = true;
-    }
-
-    const rawBottom = bottomVis ? getDrawProgress(bottom) : 0;
-    const pBottomDraw = bottomVis ? remapProgressAfterGate(rawBottom, s.anchorBottom) : 0;
-
-    return { deco: pDecoDraw, top: pTopDraw, bottom: pBottomDraw };
-  }
-
-  function getScrollLineProgress(svg, chain, chainState) {
-    const p = computeTimelineChainProgress(chain, chainState);
-    if (svg === chain.deco) {
-      return p.deco;
-    }
-    if (svg === chain.top) {
-      return p.top;
-    }
-    if (svg === chain.bottom) {
-      return p.bottom;
-    }
-    return getDrawProgress(svg);
+    const start = elementTop - vh * 1.02;
+    const idealEnd = elementTop + vh * 0.08;
+    return clampDrawProgress(scrollY, start, idealEnd, maxScroll);
   }
 
   function setLineStyles(svgElement) {
@@ -153,12 +100,9 @@
 
   function applyLineProgress(svg, progress) {
     const paths = svg.querySelectorAll('path, line, polyline');
-    const bottomLtr =
-      svg.classList.contains('timeline__line--bottom') && svg.classList.contains('draw-line');
     paths.forEach(path => {
       const length = Number(path.dataset.lineLength) || path.getTotalLength();
-      // Путь bottom в разметке начинается справа: отрицательный offset — дорисовка слева направо
-      const offset = bottomLtr ? -length * (1 - progress) : length * (1 - progress);
+      const offset = length * (1 - progress);
       path.style.strokeDashoffset = String(offset);
       path.style.opacity = progress <= 0.001 ? '0' : String(Math.min(1, 0.12 + progress * 0.88));
     });
@@ -201,6 +145,12 @@
    * Подобрано: вручную ~570px выглядело верно при завышенном авто-значении.
    */
   const HERO_LINE_RIGHT_VISUAL_TRIM_PX = { tablet: 180, desktop: 56, mobile: 120, mini: 75 };
+
+  /** Начало path timeline-deco desktop (viewBox 1165×194) */
+  const TIMELINE_DECO_VB = { w: 1165, h: 194 };
+  const TIMELINE_DECO_PATH_START_NX = 0.594238 / TIMELINE_DECO_VB.w;
+  const TIMELINE_DECO_PATH_START_NY = 48.9146 / TIMELINE_DECO_VB.h;
+  const TIMELINE_DECO_ANCHOR_TRIM_PX = 10;
 
   let heroIntroCleanup = null;
 
@@ -418,6 +368,80 @@
     });
   }
 
+  function isTimelineDecoDesktopVisible(deco) {
+    return Boolean(deco && deco.classList.contains('timeline__deco--desktop'));
+  }
+
+  /**
+   * Desktop-линия таймлайна: старт по центру 4-й фото (нижний правый угол сетки),
+   * ширина до правого края .timeline.
+   */
+  function syncTimelineDecoToFourthPhoto() {
+    const timeline = document.querySelector('.timeline');
+    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
+    const deco = document.querySelector('.timeline__deco.timeline__deco--desktop.draw-line');
+    const photo = photos[3] || photos[photos.length - 1];
+    if (!timeline || !photo || !deco || !isTimelineDecoDesktopVisible(deco)) {
+      return;
+    }
+
+    function measureAndApply() {
+      const tr = timeline.getBoundingClientRect();
+      const pr = photo.getBoundingClientRect();
+      if (pr.width < 1 || tr.width < 1) {
+        return;
+      }
+
+      const anchorCx = pr.left + pr.width / 2;
+      const anchorCy = pr.bottom;
+      const anchorCxInTimeline = anchorCx - tr.left;
+      const r = TIMELINE_DECO_PATH_START_NX;
+
+      let leftPx = (anchorCxInTimeline - tr.width * r) / (1 - r);
+      leftPx = Math.max(0, leftPx + TIMELINE_DECO_ANCHOR_TRIM_PX);
+      let widthPx = Math.max(120, tr.width - leftPx);
+
+      const aspect = TIMELINE_DECO_VB.h / TIMELINE_DECO_VB.w;
+      let topPx = anchorCy - tr.top - widthPx * aspect * TIMELINE_DECO_PATH_START_NY;
+
+      timeline.style.setProperty('--timeline-deco-left', `${Math.round(leftPx * 100) / 100}px`);
+      timeline.style.setProperty('--timeline-deco-width', `${Math.round(widthPx * 100) / 100}px`);
+      timeline.style.setProperty('--timeline-deco-top', `${Math.round(topPx * 100) / 100}px`);
+
+      void deco.offsetWidth;
+      const path = deco.querySelector('path');
+      if (path && path.getTotalLength() > 0) {
+        const pt = path.getPointAtLength(0);
+        const p = deco.createSVGPoint();
+        p.x = pt.x;
+        p.y = pt.y;
+        const ctm = path.getScreenCTM();
+        if (ctm) {
+          const sp = p.matrixTransform(ctm);
+          const gapX = anchorCx - sp.x;
+          const gapY = anchorCy - sp.y;
+          if (Math.abs(gapX) > 0.5) {
+            leftPx = Math.max(0, leftPx + Math.max(-48, Math.min(48, gapX)));
+            widthPx = Math.max(120, tr.width - leftPx);
+            timeline.style.setProperty('--timeline-deco-left', `${Math.round(leftPx * 100) / 100}px`);
+            timeline.style.setProperty('--timeline-deco-width', `${Math.round(widthPx * 100) / 100}px`);
+          }
+          if (Math.abs(gapY) > 0.5) {
+            const h = widthPx * aspect;
+            topPx = anchorCy - tr.top - h * TIMELINE_DECO_PATH_START_NY +
+              Math.max(-32, Math.min(32, gapY));
+            timeline.style.setProperty('--timeline-deco-top', `${Math.round(topPx * 100) / 100}px`);
+          }
+        }
+      }
+    }
+
+    measureAndApply();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(measureAndApply);
+    });
+  }
+
   function initDrawLines() {
     const lines = document.querySelectorAll('.draw-line');
     if (!lines.length) {
@@ -426,24 +450,11 @@
 
     const scrollLines = Array.from(lines).filter(svg => !isHeroIntroLine(svg));
 
-    const timelineChain = {
-      deco: document.querySelector('.timeline__deco.timeline__deco--desktop.draw-line'),
-      top: document.querySelector('.timeline__line.timeline__line--top.draw-line'),
-      bottom: document.querySelector('.timeline__line.timeline__line--bottom.draw-line')
-    };
-
-    const chainAnimState = {
-      decoWasDone: false,
-      anchorTop: null,
-      topWasDone: false,
-      anchorBottom: null
-    };
-
     let rafId = 0;
 
     function updateDrawLines() {
       scrollLines.forEach(svg => {
-        applyLineProgress(svg, getScrollLineProgress(svg, timelineChain, chainAnimState));
+        applyLineProgress(svg, getDrawProgress(svg));
       });
     }
 
@@ -466,13 +477,14 @@
           path.style.removeProperty('opacity');
         });
       } else {
-        applyLineProgress(svg, getScrollLineProgress(svg, timelineChain, chainAnimState));
+        applyLineProgress(svg, getDrawProgress(svg));
       }
     });
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         syncHeroDecoToFirstPhoto();
+        syncTimelineDecoToFourthPhoto();
         const activeHero = getActiveHeroIntroSvg();
         if (activeHero) {
           playHeroIntro(activeHero);
@@ -485,10 +497,7 @@
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
     window.addEventListener('resize', () => {
       syncHeroDecoToFirstPhoto();
-      chainAnimState.decoWasDone = false;
-      chainAnimState.anchorTop = null;
-      chainAnimState.topWasDone = false;
-      chainAnimState.anchorBottom = null;
+      syncTimelineDecoToFourthPhoto();
       lines.forEach(setLineStyles);
       updateDrawLines();
       const activeHero = getActiveHeroIntroSvg();
@@ -503,14 +512,296 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function bootDrawLines() {
       syncHeroDecoToFirstPhoto();
+      syncTimelineDecoToFourthPhoto();
       initDrawLines();
     });
   } else {
     syncHeroDecoToFirstPhoto();
+    syncTimelineDecoToFourthPhoto();
     initDrawLines();
   }
 
   window.addEventListener('load', () => {
     syncHeroDecoToFirstPhoto();
+    syncTimelineDecoToFourthPhoto();
+  });
+
+  const timelinePhotos = document.querySelector('.timeline__photos');
+  if (timelinePhotos && typeof ResizeObserver !== 'undefined') {
+    const timelineDecoRo = new ResizeObserver(() => {
+      syncTimelineDecoToFourthPhoto();
+    });
+    timelineDecoRo.observe(timelinePhotos);
+  }
+})();
+
+(function() {
+  const GUEST_FORM_ERRORS = {
+    name: 'Укажите имя и фамилию',
+    drink: 'Выберите хотя бы один напиток'
+  };
+  const GUEST_ATTENDANCE_LABELS = {
+    yes: 'Да, с удовольствием приду!',
+    no: 'К сожалению, не смогу присутствовать.'
+  };
+  const GUEST_EMAILJS = {
+    url: 'https://api.emailjs.com/api/v1.0/email/send',
+    serviceId: 'service_rpck6di',
+    templateId: 'template_5cq5dt9',
+    userId: 'c_j2eBbmCMU-jywNX'
+  };
+  const GUEST_SEND_SUCCESS = 'Спасибо! Анкета отправлена.';
+  const GUEST_SEND_ERROR = 'Не удалось отправить анкету. Попробуйте позже.';
+  const GUEST_ALREADY_SENT = 'Вы уже отправили форму';
+  const GUEST_SUBMIT_COOKIE = 'guest_form_sent';
+  const GUEST_SUBMIT_COOKIE_MAX_AGE_SEC = 600;
+  const GUEST_ALERT_HIDE_MS = 5000;
+  const GUEST_ALERT_TRANSITION_MS = 350;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('guest-form');
+    if (!form) {
+      return;
+    }
+
+    const nameInput = form.querySelector('#guest-name');
+    const allergyInput = form.querySelector('#guest-allergy');
+    const drinkInputs = form.querySelectorAll('input[name="drink"]');
+    const drinkFieldset = form.querySelector('[data-field="drink"]');
+    const submitBtn = form.querySelector('.guest__button');
+    const alertEl = document.getElementById('guest-form-alert');
+    let alertHideTimer = null;
+
+    function getCookie(name) {
+      const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const match = document.cookie.match(new RegExp(`(?:^|; )${escapedName}=([^;]*)`));
+      return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    function isGuestSubmitBlocked() {
+      return getCookie(GUEST_SUBMIT_COOKIE) === '1';
+    }
+
+    function setGuestSubmitCookie() {
+      document.cookie = `${GUEST_SUBMIT_COOKIE}=1; max-age=${GUEST_SUBMIT_COOKIE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
+    }
+
+    function clearAlertHideTimer() {
+      if (alertHideTimer) {
+        clearTimeout(alertHideTimer);
+        alertHideTimer = null;
+      }
+    }
+
+    function hideGuestAlert(immediate = false) {
+      if (!alertEl) {
+        return;
+      }
+      clearAlertHideTimer();
+
+      const finishHide = () => {
+        alertEl.classList.remove('is-visible', 'guest__alert--success');
+        alertEl.hidden = true;
+        alertEl.replaceChildren();
+      };
+
+      if (immediate || !alertEl.classList.contains('is-visible')) {
+        finishHide();
+        return;
+      }
+
+      alertEl.classList.remove('is-visible');
+      alertHideTimer = setTimeout(() => {
+        alertHideTimer = null;
+        finishHide();
+      }, GUEST_ALERT_TRANSITION_MS);
+    }
+
+    function showGuestAlert(messages, variant = 'error') {
+      if (!alertEl || !messages.length) {
+        return;
+      }
+      clearAlertHideTimer();
+
+      alertEl.classList.toggle('guest__alert--success', variant === 'success');
+      alertEl.replaceChildren();
+
+      if (variant === 'success' || variant === 'info') {
+        const messageEl = document.createElement('p');
+        messageEl.className = 'guest__alert-message';
+        messageEl.textContent = messages[0];
+        alertEl.appendChild(messageEl);
+      } else {
+        const list = document.createElement('ul');
+        list.className = 'guest__alert-list';
+        messages.forEach(message => {
+          const item = document.createElement('li');
+          item.className = 'guest__alert-item';
+          item.textContent = message;
+          list.appendChild(item);
+        });
+        alertEl.appendChild(list);
+      }
+
+      alertEl.hidden = false;
+      requestAnimationFrame(() => {
+        alertEl.classList.add('is-visible');
+      });
+
+      alertHideTimer = setTimeout(() => {
+        hideGuestAlert();
+      }, GUEST_ALERT_HIDE_MS);
+    }
+
+    function setSubmitLoading(isLoading) {
+      if (!submitBtn) {
+        return;
+      }
+      submitBtn.classList.toggle('is-loading', isLoading);
+      submitBtn.disabled = isLoading;
+      submitBtn.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+    }
+
+    function clearFieldErrors() {
+      nameInput.classList.remove('is-invalid');
+      drinkFieldset.classList.remove('is-invalid');
+      hideGuestAlert();
+    }
+
+    function validateGuestForm() {
+      const errors = [];
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        nameInput.classList.add('is-invalid');
+        errors.push(GUEST_FORM_ERRORS.name);
+      }
+
+      const hasDrink = Array.from(drinkInputs).some(input => input.checked);
+      if (!hasDrink) {
+        drinkFieldset.classList.add('is-invalid');
+        errors.push(GUEST_FORM_ERRORS.drink);
+      }
+
+      if (errors.length) {
+        showGuestAlert(errors, 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    function getSelectedAttendanceLabel() {
+      const selected = form.querySelector('input[name="attendance"]:checked');
+      if (!selected) {
+        return '';
+      }
+      return GUEST_ATTENDANCE_LABELS[selected.value] || selected.value;
+    }
+
+    function getSelectedDrinksLabel() {
+      return Array.from(drinkInputs)
+        .filter(input => input.checked)
+        .map(input => {
+          const textEl = input.closest('.checkbox-item')?.querySelector('.checkbox-text');
+          return textEl?.textContent?.trim() || input.value;
+        })
+        .join(', ');
+    }
+
+    function collectGuestFormPayload() {
+      return {
+        name: nameInput.value.trim(),
+        answer: getSelectedAttendanceLabel(),
+        drinks: getSelectedDrinksLabel(),
+        allergy: allergyInput?.value.trim() || ''
+      };
+    }
+
+    async function sendGuestFormViaEmailJs(templateParams) {
+      const response = await fetch(GUEST_EMAILJS.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          service_id: GUEST_EMAILJS.serviceId,
+          template_id: GUEST_EMAILJS.templateId,
+          user_id: GUEST_EMAILJS.userId,
+          template_params: templateParams
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => '');
+        throw new Error(errorText || `EmailJS error: ${response.status}`);
+      }
+    }
+
+    function resetGuestFormAfterSuccess() {
+      form.reset();
+      const yesRadio = form.querySelector('#guest-attendance-yes');
+      if (yesRadio) {
+        yesRadio.checked = true;
+      }
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      hideGuestAlert(true);
+
+      if (isGuestSubmitBlocked()) {
+        showGuestAlert([GUEST_ALREADY_SENT], 'info');
+        return;
+      }
+
+      if (!validateGuestForm()) {
+        if (!nameInput.value.trim()) {
+          nameInput.focus({ preventScroll: false });
+        } else {
+          drinkInputs[0].focus({ preventScroll: false });
+        }
+        return;
+      }
+
+      setSubmitLoading(true);
+
+      try {
+        await sendGuestFormViaEmailJs(collectGuestFormPayload());
+        setGuestSubmitCookie();
+        showGuestAlert([GUEST_SEND_SUCCESS], 'success');
+        resetGuestFormAfterSuccess();
+      } catch {
+        showGuestAlert([GUEST_SEND_ERROR], 'error');
+      } finally {
+        setSubmitLoading(false);
+      }
+    });
+
+    function tryHideValidationAlert() {
+      const nameOk = Boolean(nameInput.value.trim());
+      const drinkOk = Array.from(drinkInputs).some(item => item.checked);
+      if (nameOk) {
+        nameInput.classList.remove('is-invalid');
+      }
+      if (drinkOk) {
+        drinkFieldset.classList.remove('is-invalid');
+      }
+      if (nameOk && drinkOk) {
+        hideGuestAlert();
+      }
+    }
+
+    nameInput.addEventListener('input', () => {
+      hideGuestAlert(true);
+      tryHideValidationAlert();
+    });
+
+    drinkInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        hideGuestAlert(true);
+        tryHideValidationAlert();
+      });
+    });
   });
 })();
