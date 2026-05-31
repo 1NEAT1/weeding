@@ -1,28 +1,58 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="is-preloading">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" href="assets/images/favicon.png" type="image/png"/>
     <title>A | A 11.09.26</title>
+    <style>
+        .preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFF8EC;
+        }
+
+        html.is-preloading body {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
+<div class="preloader" id="preloader" role="status" aria-live="polite" aria-label="Загрузка">
+    <div class="preloader__inner">
+        <p class="preloader__monogram">A | A</p>
+        <p class="preloader__date">11.09.26</p>
+        <div class="preloader__track" aria-hidden="true">
+            <span class="preloader__fill"></span>
+        </div>
+    </div>
+</div>
 <div class="guest__alert" id="guest-form-alert" role="alert" aria-live="assertive" hidden></div>
 <section class="hero">
-     <svg class="hero__deco hero__deco--left draw-line desktop" width="960" height="837" viewBox="0 0 960 837" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M577.283 1.50022C545.64 204.487 401.781 594.603 79.5023 531.177C2.82461 516.085 -60.2688 407.72 108.357 346.076C264.969 295.381 744.374 359.562 958.291 834.762" stroke="#594236" stroke-width="3" stroke-linecap="round"/>
-     </svg>
-
-     <svg class="hero__deco hero__deco--left draw-line tablet" xmlns="http://www.w3.org/2000/svg" width="538" height="1171" viewBox="0 0 538 1171" fill="none">
-        <path d="M268.128 -34.1147C271.733 108.91 251.723 409.367 -91.3365 457.489C-147.95 445.939 -200.776 330.69 16.4721 316.889C233.72 303.089 370.232 612.248 536.505 1170" stroke="#594236" stroke-width="1.57343" stroke-linecap="round"/>
+    <svg class="hero__deco hero__deco--left draw-line desktop" width="959" height="836" viewBox="0 0 959 836" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M576.777 1.00014C545.133 203.987 414.928 528.25 147.559 561.408C-16.4405 581.746 -60.7753 407.22 107.851 345.576C284.06 281.159 743.867 359.062 957.785 834.262" stroke="#594236" stroke-width="2" stroke-linecap="round"/>
     </svg>
 
-    <svg class="hero__deco hero__deco--left draw-line mobile" xmlns="http://www.w3.org/2000/svg" width="367" height="796" viewBox="0 0 367 796" fill="none">
-        <path d="M184.438 -21.1883C186.881 75.7479 173.32 279.385 -59.1922 312C-97.5628 304.172 -133.366 226.061 13.876 216.708C161.118 207.355 253.64 416.89 366.333 794.914" stroke="#594236" stroke-width="1.06641" stroke-linecap="round"/>
+    <svg class="hero__deco hero__deco--left draw-line tablet" xmlns="http://www.w3.org/2000/svg" width="538"
+         height="1171" viewBox="0 0 538 1171" fill="none">
+        <path d="M268.128 -34.1147C271.733 108.91 251.723 409.367 -91.3365 457.489C-147.95 445.939 -200.776 330.69 16.4721 316.889C233.72 303.089 370.232 612.248 536.505 1170"
+              stroke="#594236" stroke-width="1.2" stroke-linecap="round"/>
     </svg>
 
-    <svg class="hero__deco hero__deco--left draw-line mini" xmlns="http://www.w3.org/2000/svg" width="126" height="381" viewBox="0 0 126 381" fill="none">
-        <path d="M78.8997 -5.20307C63.2817 94.984 3.07907 289.215 -112.784 264.645C-140.35 258.798 -161.088 206.935 -98.5421 173.285C-40.5855 145.249 56.9598 151.678 125.085 380.381" stroke="#594236" stroke-width="0.9" stroke-linecap="round"/>
+    <svg class="hero__deco hero__deco--left draw-line mobile" xmlns="http://www.w3.org/2000/svg" width="367"
+         height="796" viewBox="0 0 367 796" fill="none">
+        <path d="M184.438 -21.1883C186.881 75.7479 173.32 279.385 -59.1922 312C-97.5628 304.172 -133.366 226.061 13.876 216.708C161.118 207.355 253.64 416.89 366.333 794.914"
+              stroke="#594236" stroke-width="1" stroke-linecap="round"/>
+    </svg>
+
+    <svg class="hero__deco hero__deco--left draw-line mini" xmlns="http://www.w3.org/2000/svg" width="126" height="381"
+         viewBox="0 0 126 381" fill="none">
+        <path d="M78.8997 -5.20307C63.2817 94.984 3.07907 289.215 -112.784 264.645C-140.35 258.798 -161.088 206.935 -98.5421 173.285C-40.5855 145.249 56.9598 151.678 125.085 380.381"
+              stroke="#594236" stroke-width="0.7" stroke-linecap="round"/>
     </svg>
 
     <div class="container">
@@ -50,17 +80,37 @@
         <img class="timeline__photo" src="assets/images/topphoto2.png" alt="">
         <img class="timeline__photo" src="assets/images/topphoto.png" alt="">
     </div>
-    <svg class="timeline__deco timeline__deco--desktop draw-line" width="1165" height="194" viewBox="0 0 1165 194" fill="none" xmlns="http://www.w3.org/2000/svg">
-     <path d="M0.594238 48.9146C134.594 147.915 370.574 225.092 642.084 178.592C913.594 132.092 1163.59 0.884156 1163.59 0.884156" stroke="#CCDDE2" stroke-width="2"/>
-    </svg>
+    <div class="timeline__lines">
+        <svg class="timeline__deco timeline__deco--desktop draw-line" width="1165" height="194" viewBox="0 0 1165 194"
+             fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.594238 48.9146C134.594 147.915 370.574 225.092 642.084 178.592C913.594 132.092 1163.59 0.884156 1163.59 0.884156"
+                  stroke="#CCDDE2" stroke-width="2"/>
+        </svg>
+
+        <svg class="timeline__deco timeline__deco--tablet draw-line" width="179" height="93" viewBox="0 0 179 93" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.387207 0.248291C36.9454 57.2722 149.986 139.307 232.957 58.2109" stroke="#CCDDE2"
+                  stroke-width="0.6"/>
+        </svg>
+
+        <svg class="timeline__deco timeline__deco--mobile draw-line" width="287" height="110" viewBox="0 0 287 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.394287 0.307373C53.8462 68.884 221.586 165.96 348.397 64.9089" stroke="#CCDDE2" stroke-width="2"/>
+        </svg>
+
+        <svg class="timeline__deco timeline__deco--mini draw-line" width="550" height="265" viewBox="0 0 550 265" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.620605 0.483643C84.7234 108.384 348.65 261.126 548.178 102.13" stroke="#CCDDE2" stroke-width="3"/>
+        </svg>
+
+    </div>
+
     <div class="container">
-        <div class="timeline__title" id="timeline-guest-title">
+        <div class="timeline__title" id="timeline-guest-title" data-aos="fade-up">
             Дорогой Гость!
         </div>
-        <div class="timeline__subtitle">
+        <div class="timeline__subtitle" data-aos="fade-up" data-aos-delay="120">
             Этот день станет особенным для нас,<br> и мы хотим разделить его с теми,<br>кто дорог нашему сердцу - с вами
         </div>
-        <div class="timeline__calendar">
+        <div class="timeline__calendar" data-aos="fade-up" data-aos-delay="240">
             <div class="timeline__calendar-day">Пн</div>
             <div class="timeline__calendar-day">Вт</div>
             <div class="timeline__calendar-day">Ср</div>
@@ -77,35 +127,56 @@
             <div class="timeline__calendar-date">13</div>
         </div>
         <div class="timeline__timing">
-            <svg class="timeline__deco timing-line timing-line--wide draw-line" width="511" height="1370" viewBox="0 0 511 1370" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M32.4405 0.624634C-21.5593 68.1246 -2.05927 130.625 60.9407 145.625C123.941 160.625 164.643 110.539 267.984 121.662C420.94 138.125 476.932 304.76 383.936 370.125C290.94 435.489 204.388 326.124 81.9361 376.625C-27.4778 421.748 -34.6122 599.125 212.936 599.125C460.484 599.125 458.936 855.311 280.936 822.125C102.936 788.938 28.9317 936.125 104.936 1001.12C180.941 1066.12 251.411 984.312 404.226 1083.77C530.226 1165.78 563.726 1350.77 389.726 1465.77" stroke="#CCDDE2" stroke-width="2"/>
+            <svg class="timeline__deco timing-line draw-line" width="511" height="1370" viewBox="0 0 511 1370"
+                 fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M32.4405 0.624634C-21.5593 68.1246 -2.05927 130.625 60.9407 145.625C123.941 160.625 164.643 110.539 267.984 121.662C420.94 138.125 476.932 304.76 383.936 370.125C290.94 435.489 204.388 326.124 81.9361 376.625C-27.4778 421.748 -34.6122 599.125 212.936 599.125C460.484 599.125 458.936 855.311 280.936 822.125C102.936 788.938 28.9317 936.125 104.936 1001.12C180.941 1066.12 251.411 984.312 404.226 1083.77C530.226 1165.78 563.726 1350.77 389.726 1465.77"
+                      stroke="#CCDDE2" stroke-width="2"/>
             </svg>
 
-            <svg class="timeline__deco timing-line timing-line--md draw-line" width="377" height="1083" viewBox="0 0 377 1083" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M23.9506 0.461182C-15.9171 50.296 -1.52037 96.4394 44.9922 107.514C91.5047 118.588 121.555 81.6105 197.851 89.8223C310.778 101.977 352.116 225.002 283.458 273.261C214.799 321.519 150.898 240.776 60.4929 278.06C-20.2867 311.374 -25.554 442.33 157.209 442.33C339.973 442.33 338.83 631.471 207.413 606.97C75.9973 582.468 21.3601 691.135 77.4738 739.124C133.587 787.114 185.615 726.712 298.438 800.141C391.463 860.685 416.196 997.265 287.732 1082.17" stroke="#CCDDE2" stroke-width="1.47659"/>
+            <svg class="timeline__deco timing-line draw-line" width="461" height="1306" viewBox="0 0 461 1306"
+                 fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M34.1787 0.591309C-15.3516 59.2391 7.37185 145.043 65.1573 158.075C122.943 171.108 143.276 127.591 238.064 137.255C378.36 151.559 429.717 296.341 344.419 353.134C259.12 409.926 179.732 314.904 67.4153 358.781C-32.9424 397.987 -39.4864 552.102 187.572 552.102C414.63 552.102 413.21 799.691 249.944 770.856C86.6773 742.022 18.798 869.906 88.5116 926.382C158.225 982.857 222.863 911.774 363.029 998.188C478.6 1069.44 509.327 1205.17 349.729 1305.09"
+                      stroke="#CCDDE2" stroke-width="1.83297"/>
             </svg>
 
-            <div class="timeline__item">
+            <svg class="timeline__deco timing-line draw-line" width="394" height="1122" viewBox="0 0 394 1122"
+                 fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.4869 0.491455C-17.8713 50.4321 1.10295 128.592 49.3543 139.69C97.6056 150.788 133.579 117.808 212.727 126.038C329.875 138.218 372.759 261.505 301.534 309.866C230.309 358.227 163.019 277.312 69.2341 314.675C-14.5654 348.06 -15.0296 479.294 174.566 479.294C364.162 479.294 358.976 675.953 222.647 651.4C86.3181 626.846 24.6382 740.744 82.8496 788.835C141.061 836.926 195.034 776.396 312.074 849.981C408.577 910.654 434.234 1035.41 300.969 1120.49"
+                      stroke="#CCDDE2" stroke-width="1.54071"/>
+            </svg>
+
+            <svg class="timeline__deco timing-line draw-line" width="358" height="983" viewBox="0 0 358 983" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.0352 0.430908C-13.2271 44.2182 -5.1827 116.772 45.7153 128.478C96.6134 140.185 129.562 103.293 198.958 110.508C301.672 121.187 339.272 220.284 276.823 262.686C214.374 305.088 160.375 244.143 78.1457 276.902C20.0352 300.053 -0.735565 413.238 165.499 413.238C331.734 413.238 339.817 576.021 201.656 551.138C63.4944 526.254 26.0446 630.474 77.0836 672.639C128.123 714.805 183.445 662.733 286.064 727.251C370.676 780.448 393.173 907.83 276.327 982.431"
+                      stroke="#CCDDE2" stroke-width="1.35087"/>
+            </svg>
+
+            <svg class="timeline__deco timing-line draw-line" width="285" height="749" viewBox="0 0 285 749" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.3131 0.200012C-12.6868 48.2 17.3132 94.7 66.0251 100.695C114.737 106.69 131.819 76.4854 179.843 81.4156C250.922 88.7128 276.942 175.425 233.726 204.399C190.51 233.372 141.142 191.728 84.2381 214.113C44.0247 229.932 23.8132 326.611 157.688 320.271C291.563 313.93 271.813 447.7 177.709 423.498C83.6053 399.295 49.1833 489.708 84.5031 518.519C119.823 547.331 164.336 505.75 235.351 549.836C293.904 586.185 309.471 697.226 228.612 748.2" stroke="#CCDDE2" stroke-width="1.08675"/>
+            </svg>
+
+
+            <div class="timeline__item" data-aos="fade-up" data-aos-delay="120">
                 <div class="timeline__item-time">13:30</div>
                 <div class="timeline__item-title">Сбор гостей</div>
                 <div class="timeline__item-text">Время пролетит незаметно<br>за игристым и общением<br>с гостями</div>
             </div>
-            <div class="timeline__item">
+            <div class="timeline__item" data-aos="fade-up" data-aos-delay="120">
                 <div class="timeline__item-time">14:30</div>
                 <div class="timeline__item-title">Церемония</div>
                 <div class="timeline__item-text">Трогательный момент<br>полный любви</div>
             </div>
-            <div class="timeline__item">
-                <div class="timeline__item-time">16:00</div>
+            <div class="timeline__item" data-aos="fade-up" data-aos-delay="120">
+                <div class="timeline__item-time">15:30</div>
                 <div class="timeline__item-title">Банкет</div>
                 <div class="timeline__item-text">Время для вкусной еды,<br>смеха и танцев</div>
             </div>
-            <div class="timeline__item">
-                <div class="timeline__item-time">19:00</div>
+            <div class="timeline__item" data-aos="fade-up" data-aos-delay="120">
+                <div class="timeline__item-time">19:30</div>
                 <div class="timeline__item-title">Торт</div>
                 <div class="timeline__item-text">Самая сладкая<br>часть вечера</div>
             </div>
-            <div class="timeline__item">
+            <div class="timeline__item" data-aos="fade-up" data-aos-delay="120">
                 <div class="timeline__item-time">22:00</div>
                 <div class="timeline__item-title">Окончание вечера</div>
                 <div class="timeline__item-text">Даже такой прекрасный вечер<br> может закончится, однако,<br> не
@@ -117,7 +188,7 @@
 </section>
 <section class="location">
     <div class="container">
-        <div class="location__card">
+        <div class="location__card" data-aos="fade-up" data-aos-delay="120">
             <div class="location__item">
                 <img class="location__photo" src="assets/images/location.png" alt="">
             </div>
@@ -138,11 +209,11 @@
 </section>
 <section class="dresscode">
     <div class="container">
-        <div class="dresscode__title">Дресс-код</div>
-        <div class="dresscode__subtitle">Мы очень старались сделать праздник<br>красивым и нам будет особенно приятно
+        <div class="dresscode__title" data-aos="fade-up" data-aos-delay="120">Дресс-код</div>
+        <div class="dresscode__subtitle" data-aos="fade-up" data-aos-delay="120">Мы очень старались сделать праздник<br>красивым и нам будет особенно приятно
             видеть вас<br>в нарядах цветовой гаммы нашей свадьбы
         </div>
-        <div class="dresscode__palitra">
+        <div class="dresscode__palitra" data-aos="fade-up" data-aos-delay="120">
             <img src="assets/images/color1.png" alt="">
             <img src="assets/images/color2.png" alt="">
             <img src="assets/images/color3.png" alt="">
@@ -151,16 +222,16 @@
             <img src="assets/images/color6.png" alt="">
             <img src="assets/images/color7.png" alt="">
         </div>
-        <div class="dresscode__text">Просим при выборе наряда воздержаться<br>от принтов и белого цвета (в белом только
+        <div class="dresscode__text" data-aos="fade-up" data-aos-delay="120">Просим при выборе наряда воздержаться<br>от принтов и белого цвета (в белом только
             невеста)
         </div>
     </div>
 </section>
 <section class="details">
     <div class="container">
-        <div class="details__title">Детали</div>
+        <div class="details__title" data-aos="fade-up" data-aos-delay="120">Детали</div>
         <div class="details__cards">
-            <div class="details__item">
+            <div class="details__item" data-aos="fade-up" data-aos-delay="120">
                 <div class="details__content">
                     <div class="details__item-title">Горько!</div>
                     <div class="details__item-text">Мы будем очень благодарны, если вы воздержитесь от криков “горько”.
@@ -169,7 +240,7 @@
                 </div>
             </div>
 
-            <div class="details__item">
+            <div class="details__item" data-aos="fade-up" data-aos-delay="120">
                 <div class="details__content">
                     <div class="details__item-title">Подарки</div>
                     <div class="details__item-text">Свои тёплые слова и пожелания приносите в сердцах, а&nbsp;подарки&nbsp;-
@@ -183,9 +254,9 @@
 </section>
 <section class="guest">
     <div class="container">
-        <div class="guest__title">Анкета гостя</div>
-        <div class="guest__subtitle">Мы будем рады, если вы подтвердите<br>свое присутствие до 11.08.2026</div>
-        <form class="guest__profile guest__form" id="guest-form" novalidate>
+        <div class="guest__title" data-aos="fade-up" data-aos-delay="120">Анкета гостя</div>
+        <div class="guest__subtitle" data-aos="fade-up" data-aos-delay="120">Мы будем рады, если вы подтвердите<br>свое присутствие до 11.08.2026</div>
+        <form class="guest__profile guest__form" id="guest-form" novalidate data-aos="fade-up" data-aos-delay="120">
             <div class="guest__formname" data-field="name">
                 <label class="guest__formname-fio" for="guest-name">Ваше имя и фамилия</label>
                 <div class="guest__formname-discription">если вы будете с парой или семьей,<br>то за каждого гостя
@@ -205,7 +276,7 @@
             <fieldset class="guest__formattend">
                 <legend class="guest__formattend-title">Ваше присутствие на торжестве?</legend>
                 <div class="input-radio">
-                    <label class="input-radio__label">
+                    <label class="input-radio__option" for="guest-attendance-yes">
                         <input
                                 type="radio"
                                 id="guest-attendance-yes"
@@ -213,13 +284,17 @@
                                 value="yes"
                                 checked
                                 class="input-radio__input"/>
+                        <span class="input-radio__control" aria-hidden="true"></span>
                         <span class="input-radio__indicator">Да, с удовольствием приду!</span>
+                    </label>
+                    <label class="input-radio__option" for="guest-attendance-no">
                         <input
                                 type="radio"
                                 id="guest-attendance-no"
                                 name="attendance"
                                 value="no"
                                 class="input-radio__input"/>
+                        <span class="input-radio__control" aria-hidden="true"></span>
                         <span class="input-radio__indicator">К сожалению, не смогу присутствовать.</span>
                     </label>
                 </div>
@@ -260,7 +335,8 @@
                 </div>
             </fieldset>
             <div class="guest__formname guest__formname--allergy">
-                <label class="guest__formname-fio" for="guest-allergy">Укажите, если у вас есть аллергии<br>или ограничения по еде</label>
+                <label class="guest__formname-fio" for="guest-allergy">Укажите, если у вас есть аллергии<br>или
+                    ограничения по еде</label>
                 <input
                         class="form-input"
                         type="text"
@@ -279,20 +355,25 @@
 </section>
 <section class="info">
     <div class="container">
-        <div class="info__contact">
-            <div class="info__contact-card">
-                <p class="info__contact-text">Мы&nbsp;будем очень волноваться
-                    на&nbsp;свадьбе, поэтому все вопросы
-                    доверили в&nbsp;руки&nbsp;нашего координатора:&nbsp;<span>Александры</span></p>
-                <a class="info__contact-button" href="https://t.me/Gordeeva_Events" target="_blank">Написать</a>
-            </div>
-               <svg class="info__line draw-line" width="409" height="284" viewBox="0 0 409 284" fill="none" xmlns="http://www.w3.org/2000/svg">
-                 <path d="M371.367 219.444C405.064 215.783 418.606 239.78 388.574 237.052C390.61 267.139 366.932 253.049 371.368 219.445" stroke="#FFF8EC" stroke-width="1.08992" stroke-linecap="round"/>
-                 <path d="M176.659 16.2956C181.118 74.5393 161.021 192.319 44.9693 197.487C17.3577 198.717 -12.6327 173.25 40.9034 144.376C91.122 119.368 261.469 103.354 371.319 219.444" stroke="#FFF8EC" stroke-width="1.06004" stroke-linecap="round"/>
+        <div class="info__contact" data-aos="fade-up" data-aos-delay="120">
+            <div class="info__contact-card-area">
+                <div class="info__contact-card">
+                    <p class="info__contact-text">Мы&nbsp;будем очень волноваться
+                        на&nbsp;свадьбе, поэтому все вопросы
+                        доверили в&nbsp;руки&nbsp;нашего координатора:&nbsp;<span>Александры</span></p>
+                    <a class="info__contact-button" href="https://t.me/Gordeeva_Events" target="_blank">Написать</a>
+                </div>
+                <svg class="info__line draw-line" width="409" height="284" viewBox="0 0 409 284" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M371.367 219.444C405.064 215.783 418.606 239.78 388.574 237.052C390.61 267.139 366.932 253.049 371.368 219.445"
+                          stroke="#FFF8EC" stroke-width="1.08992" stroke-linecap="round"/>
+                    <path d="M176.659 16.2956C181.118 74.5393 161.021 192.319 44.9693 197.487C17.3577 198.717 -12.6327 173.25 40.9034 144.376C91.122 119.368 261.469 103.354 371.319 219.444"
+                          stroke="#FFF8EC" stroke-width="1.06004" stroke-linecap="round"/>
                 </svg>
-            <div class="info__title">До свадьбы</div>
-            <div class="info__subtitle">Осталось...</div>
-            <div class="info__countdown">
+            </div>
+            <div class="info__title" data-aos="fade-up" data-aos-delay="120">До свадьбы</div>
+            <div class="info__subtitle" data-aos="fade-up" data-aos-delay="120">Осталось...</div>
+            <div class="info__countdown" data-aos="fade-up" data-aos-delay="120">
                 <div class="countdown">
                     <div class="countdown__item">
                         <span class="countdown__value" id="days">00</span>

@@ -48,6 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 (function() {
+  function whenPreloaderHidden(callback) {
+    if (!document.getElementById('preloader')) {
+      callback();
+      return;
+    }
+    window.addEventListener('preloader-hidden', callback, { once: true });
+  }
+
+  function easeInOutSmoothstep(t) {
+    const p = Math.max(0, Math.min(1, t));
+    return p * p * (3 - 2 * p);
+  }
+
   function clampDrawProgress(scrollY, start, end, maxScroll) {
     const safeEnd = Math.min(end, maxScroll);
     if (safeEnd <= start) {
@@ -58,20 +71,75 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.max(0, Math.min(1, (scrollY - start) / span));
   }
 
-  /** info__line: прогресс по положению в viewport, без привязки к maxScroll. */
+  const INFO_LINE_TAIL_START_RATIO = 0.88;
+  const INFO_LINE_FINISH_SCROLL_RATIO = 0.95;
+
+  /** info__line: плавно в viewport + финиш около 95% прокрутки страницы. */
   function getInfoLineDrawProgress(svg) {
     const rect = svg.getBoundingClientRect();
     const vh = window.innerHeight;
-    const startTop = vh * 1.05;
-    const endTop = vh * 0.88;
-    const span = Math.max(1, startTop - endTop);
-    return Math.max(0, Math.min(1, (startTop - rect.top) / span));
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+    const finishScroll = maxScroll * INFO_LINE_FINISH_SCROLL_RATIO;
+
+    if (rect.top > vh) {
+      return 0;
+    }
+
+    if (rect.bottom < 0 || scrollY >= finishScroll) {
+      return 1;
+    }
+
+    const anchorY = rect.top + rect.height * 0.38;
+    const startAnchor = vh * 0.96;
+    const endAnchor = vh * 0.34;
+    const span = Math.max(1, startAnchor - endAnchor);
+    const linear = Math.max(0, Math.min(1, (startAnchor - anchorY) / span));
+    let progress = easeInOutSmoothstep(linear);
+
+    if (maxScroll > 0) {
+      const tailStart = maxScroll * INFO_LINE_TAIL_START_RATIO;
+      const tailEnd = Math.max(tailStart + 1, finishScroll);
+
+      if (scrollY >= tailStart) {
+        const tailLinear = Math.max(0, Math.min(1, (scrollY - tailStart) / (tailEnd - tailStart)));
+        progress = Math.max(progress, easeInOutSmoothstep(tailLinear));
+      }
+    }
+
+    return Math.min(1, progress);
+  }
+
+  /** Горизонтальные timeline__deco в .timeline__lines — быстрее, пока блок в зоне видимости. */
+  function isTimelineHeaderDecoLine(svg) {
+    return svg.classList.contains('timeline__deco') && !svg.classList.contains('timing-line');
+  }
+
+  function getTimelineHeaderDecoDrawProgress(svg) {
+    const rect = svg.getBoundingClientRect();
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const vh = window.innerHeight;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+    const elementTop = rect.top + scrollY;
+
+    const start = elementTop - vh * 0.92;
+    const end = elementTop - vh * 0.55;
+
+    if (end <= start + 6) {
+      return rect.top < vh * 0.95 && rect.bottom > 0 ? 1 : 0;
+    }
+
+    return clampDrawProgress(scrollY, start, end, maxScroll);
   }
 
   /** Доля отрисовки 0…1: растёт при скролле вниз по мере приближения блока к верху экрана. */
   function getDrawProgress(svg) {
     if (svg.classList.contains('info__line')) {
       return getInfoLineDrawProgress(svg);
+    }
+
+    if (isTimelineHeaderDecoLine(svg)) {
+      return getTimelineHeaderDecoDrawProgress(svg);
     }
 
     const rect = svg.getBoundingClientRect();
@@ -100,11 +168,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function applyLineProgress(svg, progress) {
     const paths = svg.querySelectorAll('path, line, polyline');
+    const isTimelineDeco = svg.classList.contains('timeline__deco') &&
+      !svg.classList.contains('timing-line');
+    const isTimingLine = svg.classList.contains('timing-line');
+    const isInfoLine = svg.classList.contains('info__line');
     paths.forEach(path => {
       const length = Number(path.dataset.lineLength) || path.getTotalLength();
       const offset = length * (1 - progress);
       path.style.strokeDashoffset = String(offset);
-      path.style.opacity = progress <= 0.001 ? '0' : String(Math.min(1, 0.12 + progress * 0.88));
+      if (progress <= 0.001) {
+        path.style.opacity = '0';
+      } else if (isTimelineDeco || isTimingLine) {
+        path.style.opacity = '1';
+      } else if (isInfoLine) {
+        path.style.opacity = String(Math.min(1, easeInOutSmoothstep(progress)));
+      } else {
+        path.style.opacity = String(Math.min(1, 0.12 + progress * 0.88));
+      }
     });
   }
 
@@ -152,13 +232,74 @@ document.addEventListener('DOMContentLoaded', () => {
   const TIMELINE_DECO_PATH_START_NY = 48.9146 / TIMELINE_DECO_VB.h;
   const TIMELINE_DECO_ANCHOR_TRIM_PX = 10;
 
+  /** Начало path timeline-deco tablet (viewBox 179×93) */
+  const TIMELINE_TABLET_DECO_VB = { w: 179, h: 93 };
+  const TIMELINE_TABLET_DECO_PATH_START_NX = 0.387207 / TIMELINE_TABLET_DECO_VB.w;
+  const TIMELINE_TABLET_DECO_PATH_START_NY = 0.248291 / TIMELINE_TABLET_DECO_VB.h;
+  const TIMELINE_TABLET_DECO_ANCHOR_TRIM_PX = 4;
+
+  /** Начало path timeline-deco mobile (viewBox 287×110) */
+  const TIMELINE_MOBILE_DECO_VB = { w: 287, h: 110 };
+  const TIMELINE_MOBILE_DECO_PATH_START_NX = 0.394287 / TIMELINE_MOBILE_DECO_VB.w;
+  const TIMELINE_MOBILE_DECO_PATH_START_NY = 0.307373 / TIMELINE_MOBILE_DECO_VB.h;
+  const TIMELINE_MOBILE_DECO_ANCHOR_TRIM_PX = 4;
+
+  /** Начало path timeline-deco mini (viewBox 550×265) */
+  const TIMELINE_MINI_DECO_VB = { w: 550, h: 265 };
+  const TIMELINE_MINI_DECO_PATH_START_NX = 0.620605 / TIMELINE_MINI_DECO_VB.w;
+  const TIMELINE_MINI_DECO_PATH_START_NY = 0.483643 / TIMELINE_MINI_DECO_VB.h;
+  const TIMELINE_MINI_DECO_ANCHOR_TRIM_PX = 4;
+
   let heroIntroCleanup = null;
+  let heroIntroCompletedSvg = null;
+  let heroIntroPlayingSvg = null;
+  let lastHeroLineRightPx = null;
+  let heroDecoPositionLocked = false;
+  let heroDecoLockWidth = null;
+  let heroDecoPositionSettled = false;
+  let lastLayoutSyncWidth = window.innerWidth;
+
+  function resetHeroLinePositionCache() {
+    lastHeroLineRightPx = null;
+  }
+
+  function resetHeroDecoLock() {
+    heroDecoPositionLocked = false;
+    heroDecoLockWidth = null;
+  }
+
+  function applyHeroDecoLock() {
+    heroDecoPositionLocked = true;
+    heroDecoLockWidth = window.innerWidth;
+  }
 
   function cancelHeroIntro() {
     if (typeof heroIntroCleanup === 'function') {
       heroIntroCleanup();
       heroIntroCleanup = null;
     }
+    heroIntroPlayingSvg = null;
+  }
+
+  function ensureHeroLineDrawn(svg) {
+    if (!svg || !isHeroIntroLine(svg)) {
+      return;
+    }
+    cancelHeroIntro();
+    setLineStyles(svg);
+    svg.querySelectorAll('path, line, polyline').forEach(path => {
+      const len = Number(path.dataset.lineLength) || path.getTotalLength();
+      path.style.strokeDasharray = String(len);
+      path.style.strokeDashoffset = '0';
+      path.style.opacity = '1';
+    });
+    heroIntroCompletedSvg = svg;
+  }
+
+  function finishHeroIntro(svg) {
+    heroIntroCompletedSvg = svg;
+    heroIntroPlayingSvg = null;
+    heroIntroCleanup = null;
   }
 
   /** Ручная отрисовка: CSS/WAAPI по stroke-dashoffset на SVG часто не работают. */
@@ -167,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     cancelHeroIntro();
+    heroIntroPlayingSvg = svg;
     svg.classList.remove('draw-line--visible');
 
     setLineStyles(svg);
@@ -206,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
           path.style.strokeDashoffset = '0';
           path.style.opacity = '1';
         });
+        finishHeroIntro(svg);
         return;
       }
 
@@ -235,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
             path.style.strokeDashoffset = '0';
             path.style.opacity = '1';
           });
-          heroIntroCleanup = null;
+          finishHeroIntro(svg);
         }
       }
 
@@ -283,12 +426,27 @@ document.addEventListener('DOMContentLoaded', () => {
    * Правый край SVG к центру первой фото.
    * База: hero.right − targetCx, затем итерации по bbox (конец path обычно левее правого края бокса).
    */
-  function syncHeroDecoToFirstPhoto() {
+  function syncHeroDecoToFirstPhoto(options = {}) {
+    const { force = false } = options;
     const hero = document.querySelector('.hero');
     const photo = document.querySelector('.timeline__photos .timeline__photo');
+    const layoutWidth = window.innerWidth;
+    const widthChanged = heroDecoLockWidth !== null &&
+      Math.abs(layoutWidth - heroDecoLockWidth) > 8;
+
     if (!hero || !photo) {
       return;
     }
+
+    if (heroDecoPositionSettled && heroDecoPositionLocked && !widthChanged) {
+      return;
+    }
+
+    if (widthChanged) {
+      resetHeroDecoLock();
+      resetHeroLinePositionCache();
+    }
+
     function measure() {
       const hr = hero.getBoundingClientRect();
       const pr = photo.getBoundingClientRect();
@@ -301,7 +459,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function commit(px) {
-      hero.style.setProperty('--hero-line-right-in-hero', `${Math.round(px * 100) / 100}px`);
+      const rounded = Math.round(px * 100) / 100;
+      if (!force && lastHeroLineRightPx !== null && Math.abs(lastHeroLineRightPx - rounded) < 2) {
+        return;
+      }
+      lastHeroLineRightPx = rounded;
+      hero.style.setProperty('--hero-line-right-in-hero', `${rounded}px`);
     }
 
     /** Сдвиг декора вправо = уменьшить CSS right. */
@@ -338,6 +501,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const active = getActiveHeroIntroSvg();
         if (!active) {
           commit(m.rightPx);
+          if (heroDecoPositionSettled) {
+            applyHeroDecoLock();
+          }
           return;
         }
         const tablet = Boolean(active.classList.contains('tablet'));
@@ -364,27 +530,56 @@ document.addEventListener('DOMContentLoaded', () => {
         let rp = refineRightToTarget(m.targetCx, active, m.rightPx, stepCap, steps);
         rp = Math.max(0, rp - trim);
         commit(rp);
+        if (heroDecoPositionSettled) {
+          applyHeroDecoLock();
+        }
       });
     });
   }
 
   function isTimelineDecoDesktopVisible(deco) {
-    return Boolean(deco && deco.classList.contains('timeline__deco--desktop'));
+    return Boolean(
+      deco &&
+      deco.classList.contains('timeline__deco--desktop') &&
+      window.matchMedia('(min-width: 1200px)').matches
+    );
   }
 
-  /**
-   * Desktop-линия таймлайна: старт по центру 4-й фото (нижний правый угол сетки),
-   * ширина до правого края .timeline.
-   */
-  function syncTimelineDecoToFourthPhoto() {
-    const timeline = document.querySelector('.timeline');
-    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
-    const deco = document.querySelector('.timeline__deco.timeline__deco--desktop.draw-line');
-    const photo = photos[3] || photos[photos.length - 1];
-    if (!timeline || !photo || !deco || !isTimelineDecoDesktopVisible(deco)) {
-      return;
-    }
+  function isTimelineDecoTabletVisible(deco) {
+    return Boolean(
+      deco &&
+      deco.classList.contains('timeline__deco--tablet') &&
+      window.matchMedia('(min-width: 768px) and (max-width: 1199px)').matches
+    );
+  }
 
+  function isTimelineDecoMobileVisible(deco) {
+    return Boolean(
+      deco &&
+      deco.classList.contains('timeline__deco--mobile') &&
+      window.matchMedia('(min-width: 576px) and (max-width: 768px)').matches
+    );
+  }
+
+  function isTimelineDecoMiniVisible(deco) {
+    return Boolean(
+      deco &&
+      deco.classList.contains('timeline__deco--mini') &&
+      window.matchMedia('(max-width: 575px)').matches
+    );
+  }
+
+  function applyTimelineDecoPosition({
+    timeline,
+    deco,
+    photo,
+    vb,
+    pathStartNx,
+    pathStartNy,
+    anchorTrimPx,
+    cssPrefix,
+    maxWidthRatio = null
+  }) {
     function measureAndApply() {
       const tr = timeline.getBoundingClientRect();
       const pr = photo.getBoundingClientRect();
@@ -395,18 +590,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const anchorCx = pr.left + pr.width / 2;
       const anchorCy = pr.bottom;
       const anchorCxInTimeline = anchorCx - tr.left;
-      const r = TIMELINE_DECO_PATH_START_NX;
+      const r = pathStartNx;
 
       let leftPx = (anchorCxInTimeline - tr.width * r) / (1 - r);
-      leftPx = Math.max(0, leftPx + TIMELINE_DECO_ANCHOR_TRIM_PX);
-      let widthPx = Math.max(120, tr.width - leftPx);
+      leftPx = Math.max(0, leftPx + anchorTrimPx);
+      let widthPx = Math.max(80, tr.width - leftPx);
+      if (maxWidthRatio != null) {
+        widthPx = Math.min(widthPx, tr.width * maxWidthRatio);
+      }
 
-      const aspect = TIMELINE_DECO_VB.h / TIMELINE_DECO_VB.w;
-      let topPx = anchorCy - tr.top - widthPx * aspect * TIMELINE_DECO_PATH_START_NY;
+      const aspect = vb.h / vb.w;
+      let topPx = anchorCy - tr.top - widthPx * aspect * pathStartNy;
 
-      timeline.style.setProperty('--timeline-deco-left', `${Math.round(leftPx * 100) / 100}px`);
-      timeline.style.setProperty('--timeline-deco-width', `${Math.round(widthPx * 100) / 100}px`);
-      timeline.style.setProperty('--timeline-deco-top', `${Math.round(topPx * 100) / 100}px`);
+      timeline.style.setProperty(`--${cssPrefix}-left`, `${Math.round(leftPx * 100) / 100}px`);
+      timeline.style.setProperty(`--${cssPrefix}-width`, `${Math.round(widthPx * 100) / 100}px`);
+      timeline.style.setProperty(`--${cssPrefix}-top`, `${Math.round(topPx * 100) / 100}px`);
 
       void deco.offsetWidth;
       const path = deco.querySelector('path');
@@ -422,15 +620,15 @@ document.addEventListener('DOMContentLoaded', () => {
           const gapY = anchorCy - sp.y;
           if (Math.abs(gapX) > 0.5) {
             leftPx = Math.max(0, leftPx + Math.max(-48, Math.min(48, gapX)));
-            widthPx = Math.max(120, tr.width - leftPx);
-            timeline.style.setProperty('--timeline-deco-left', `${Math.round(leftPx * 100) / 100}px`);
-            timeline.style.setProperty('--timeline-deco-width', `${Math.round(widthPx * 100) / 100}px`);
+            widthPx = Math.max(80, tr.width - leftPx);
+            timeline.style.setProperty(`--${cssPrefix}-left`, `${Math.round(leftPx * 100) / 100}px`);
+            timeline.style.setProperty(`--${cssPrefix}-width`, `${Math.round(widthPx * 100) / 100}px`);
           }
           if (Math.abs(gapY) > 0.5) {
             const h = widthPx * aspect;
-            topPx = anchorCy - tr.top - h * TIMELINE_DECO_PATH_START_NY +
+            topPx = anchorCy - tr.top - h * pathStartNy +
               Math.max(-32, Math.min(32, gapY));
-            timeline.style.setProperty('--timeline-deco-top', `${Math.round(topPx * 100) / 100}px`);
+            timeline.style.setProperty(`--${cssPrefix}-top`, `${Math.round(topPx * 100) / 100}px`);
           }
         }
       }
@@ -440,6 +638,244 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => {
       requestAnimationFrame(measureAndApply);
     });
+  }
+
+  /**
+   * Desktop-линия таймлайна: старт по центру 4-й фото (нижний правый угол сетки),
+   * ширина до правого края .timeline.
+   */
+  function syncTimelineDecoToFourthPhoto() {
+    const timeline = document.querySelector('.timeline');
+    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
+    const deco = document.querySelector('.timeline__deco.timeline__deco--desktop.draw-line');
+    const photo = photos[3] || photos[photos.length - 1];
+    if (!timeline || !photo || !deco || !isTimelineDecoDesktopVisible(deco)) {
+      return;
+    }
+
+    applyTimelineDecoPosition({
+      timeline,
+      deco,
+      photo,
+      vb: TIMELINE_DECO_VB,
+      pathStartNx: TIMELINE_DECO_PATH_START_NX,
+      pathStartNy: TIMELINE_DECO_PATH_START_NY,
+      anchorTrimPx: TIMELINE_DECO_ANCHOR_TRIM_PX,
+      cssPrefix: 'timeline-deco'
+    });
+  }
+
+  /** Tablet-линия: привязка начала path к 4-й фото. */
+  function syncTimelineDecoTabletToFourthPhoto() {
+    const timeline = document.querySelector('.timeline');
+    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
+    const deco = document.querySelector('.timeline__deco.timeline__deco--tablet.draw-line');
+    const photo = photos[3] || photos[photos.length - 1];
+    if (!timeline || !photo || !deco || !isTimelineDecoTabletVisible(deco)) {
+      return;
+    }
+
+    applyTimelineDecoPosition({
+      timeline,
+      deco,
+      photo,
+      vb: TIMELINE_TABLET_DECO_VB,
+      pathStartNx: TIMELINE_TABLET_DECO_PATH_START_NX,
+      pathStartNy: TIMELINE_TABLET_DECO_PATH_START_NY,
+      anchorTrimPx: TIMELINE_TABLET_DECO_ANCHOR_TRIM_PX,
+      cssPrefix: 'timeline-deco-tablet',
+      maxWidthRatio: 0.44
+    });
+  }
+
+  /** Mobile-линия: привязка начала path к 4-й фото. */
+  function syncTimelineDecoMobileToFourthPhoto() {
+    const timeline = document.querySelector('.timeline');
+    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
+    const deco = document.querySelector('.timeline__deco.timeline__deco--mobile.draw-line');
+    const photo = photos[3] || photos[photos.length - 1];
+    if (!timeline || !photo || !deco || !isTimelineDecoMobileVisible(deco)) {
+      return;
+    }
+
+    applyTimelineDecoPosition({
+      timeline,
+      deco,
+      photo,
+      vb: TIMELINE_MOBILE_DECO_VB,
+      pathStartNx: TIMELINE_MOBILE_DECO_PATH_START_NX,
+      pathStartNy: TIMELINE_MOBILE_DECO_PATH_START_NY,
+      anchorTrimPx: TIMELINE_MOBILE_DECO_ANCHOR_TRIM_PX,
+      cssPrefix: 'timeline-deco-mobile',
+      maxWidthRatio: 0.52
+    });
+  }
+
+  /** Mini-линия: привязка начала path к 4-й фото. */
+  function syncTimelineDecoMiniToFourthPhoto() {
+    const timeline = document.querySelector('.timeline');
+    const photos = document.querySelectorAll('.timeline__photos .timeline__photo');
+    const deco = document.querySelector('.timeline__deco.timeline__deco--mini.draw-line');
+    const photo = photos[3] || photos[photos.length - 1];
+    if (!timeline || !photo || !deco || !isTimelineDecoMiniVisible(deco)) {
+      return;
+    }
+
+    applyTimelineDecoPosition({
+      timeline,
+      deco,
+      photo,
+      vb: TIMELINE_MINI_DECO_VB,
+      pathStartNx: TIMELINE_MINI_DECO_PATH_START_NX,
+      pathStartNy: TIMELINE_MINI_DECO_PATH_START_NY,
+      anchorTrimPx: TIMELINE_MINI_DECO_ANCHOR_TRIM_PX,
+      cssPrefix: 'timeline-deco-mini',
+      maxWidthRatio: 0.56
+    });
+  }
+
+  function syncTimelineDecoLines() {
+    syncTimelineDecoToFourthPhoto();
+    syncTimelineDecoTabletToFourthPhoto();
+    syncTimelineDecoMobileToFourthPhoto();
+    syncTimelineDecoMiniToFourthPhoto();
+  }
+
+  const MOBILE_FIRST_SCREEN_MQ = '(max-width: 576px)';
+  const MOBILE_FIRST_SCREEN_MIN_PHOTO = 92;
+  const MOBILE_FIRST_SCREEN_SAFE_INSET = 23;
+  let lastMobileLayoutState = null;
+  let mobileFirstScreenLocked = false;
+  let mobileFirstScreenLockWidth = null;
+  let mobileFirstScreenLockVh = null;
+  let mobileFirstScreenSettled = false;
+  let layoutGeometryRaf = 0;
+  let pendingLayoutGeometry = { mobile: false, deco: false, heroDeco: false };
+
+  function scheduleLayoutGeometrySync(flags = {}) {
+    pendingLayoutGeometry.mobile = pendingLayoutGeometry.mobile || Boolean(flags.mobile);
+    pendingLayoutGeometry.deco = pendingLayoutGeometry.deco || Boolean(flags.deco);
+    pendingLayoutGeometry.heroDeco = pendingLayoutGeometry.heroDeco || Boolean(flags.heroDeco);
+
+    if (layoutGeometryRaf) {
+      return;
+    }
+
+    layoutGeometryRaf = requestAnimationFrame(() => {
+      layoutGeometryRaf = 0;
+      const snapshot = pendingLayoutGeometry;
+      pendingLayoutGeometry = { mobile: false, deco: false, heroDeco: false };
+
+      if (snapshot.mobile) {
+        syncMobileFirstScreenLayout();
+      }
+      if (snapshot.deco) {
+        syncTimelineDecoLines();
+      }
+      if (snapshot.heroDeco) {
+        syncHeroDecoToFirstPhoto({ force: false });
+      }
+    });
+  }
+
+  function applyMobileFirstScreenLock(layoutWidth) {
+    mobileFirstScreenLocked = true;
+    mobileFirstScreenLockWidth = layoutWidth;
+    mobileFirstScreenLockVh = window.innerHeight;
+  }
+
+  function resetMobileFirstScreenLock() {
+    mobileFirstScreenLocked = false;
+    mobileFirstScreenLockWidth = null;
+    mobileFirstScreenLockVh = null;
+  }
+
+  /** ≤576px: размер фото и padding hero под высоту экрана, чтобы сетка была на первом экране. */
+  function syncMobileFirstScreenLayout() {
+    const root = document.documentElement;
+    const hero = document.querySelector('.hero');
+    const container = hero && hero.querySelector('.container');
+    const isMobile = window.matchMedia(MOBILE_FIRST_SCREEN_MQ).matches;
+    const layoutWidth = window.innerWidth;
+
+    if (!isMobile || !hero || !container) {
+      if (lastMobileLayoutState === null) {
+        return;
+      }
+      lastMobileLayoutState = null;
+      resetMobileFirstScreenLock();
+      resetHeroDecoLock();
+      root.classList.remove('is-compact-first-screen');
+      root.style.removeProperty('--mobile-first-screen-photo-size');
+      root.style.removeProperty('--mobile-above-seam');
+      hero.style.removeProperty('padding-bottom');
+      return;
+    }
+
+    const widthChanged = mobileFirstScreenLockWidth !== null &&
+      Math.abs(layoutWidth - mobileFirstScreenLockWidth) > 8;
+
+    if (mobileFirstScreenSettled && mobileFirstScreenLocked && !widthChanged) {
+      return;
+    }
+
+    if (widthChanged) {
+      resetMobileFirstScreenLock();
+    }
+
+    const styles = getComputedStyle(root);
+    const gap = parseFloat(styles.getPropertyValue('--timeline-photo-gap')) || 10;
+    const pad = parseFloat(styles.getPropertyValue('--timeline-photos-padding')) || 12;
+    const vh = mobileFirstScreenLockVh ?? window.innerHeight;
+    const maxPhoto = Math.min(layoutWidth * 0.42, 200);
+    const safeBottom = vh - MOBILE_FIRST_SCREEN_SAFE_INSET;
+
+    function measurePhotoSize() {
+      const heroRect = hero.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const aboveSeam = containerRect.bottom - heroRect.top;
+      const photoSize = (safeBottom - aboveSeam - 2 * pad - gap) / 2;
+      return { aboveSeam, photoSize };
+    }
+
+    root.classList.remove('is-compact-first-screen');
+    let { aboveSeam, photoSize } = measurePhotoSize();
+    const needsCompact = photoSize < MOBILE_FIRST_SCREEN_MIN_PHOTO;
+
+    if (needsCompact) {
+      root.classList.add('is-compact-first-screen');
+      ({ aboveSeam, photoSize } = measurePhotoSize());
+    }
+
+    photoSize = Math.max(
+      MOBILE_FIRST_SCREEN_MIN_PHOTO,
+      Math.min(maxPhoto, photoSize)
+    );
+
+    const stackOffset = photoSize + pad + gap / 2;
+    const roundedPhoto = Math.round(photoSize * 100) / 100;
+    const roundedStack = Math.round(stackOffset * 100) / 100;
+    const nextState = `${roundedPhoto}|${roundedStack}|${needsCompact ? 1 : 0}|${Math.round(layoutWidth)}`;
+
+    if (lastMobileLayoutState === nextState) {
+      if (lastMobileLayoutState) {
+        const prevCompact = lastMobileLayoutState.split('|')[2] === '1';
+        root.classList.toggle('is-compact-first-screen', prevCompact);
+      }
+      if (mobileFirstScreenSettled) {
+        applyMobileFirstScreenLock(layoutWidth);
+      }
+      return;
+    }
+
+    lastMobileLayoutState = nextState;
+    root.classList.toggle('is-compact-first-screen', needsCompact);
+    root.style.setProperty('--mobile-first-screen-photo-size', `${roundedPhoto}px`);
+    root.style.setProperty('--mobile-above-seam', `${Math.round(aboveSeam)}px`);
+    hero.style.setProperty('padding-bottom', `${roundedStack}px`);
+    if (mobileFirstScreenSettled) {
+      applyMobileFirstScreenLock(layoutWidth);
+    }
   }
 
   function initDrawLines() {
@@ -481,57 +917,112 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    requestAnimationFrame(() => {
+    whenPreloaderHidden(() => {
       requestAnimationFrame(() => {
-        syncHeroDecoToFirstPhoto();
-        syncTimelineDecoToFourthPhoto();
-        const activeHero = getActiveHeroIntroSvg();
-        if (activeHero) {
-          playHeroIntro(activeHero);
-        } else {
-          cancelHeroIntro();
-        }
+        requestAnimationFrame(() => {
+          syncMobileFirstScreenLayout();
+          mobileFirstScreenSettled = true;
+          heroDecoPositionSettled = true;
+          syncMobileFirstScreenLayout();
+          resetHeroLinePositionCache();
+          syncHeroDecoToFirstPhoto({ force: true });
+          syncTimelineDecoLines();
+          const activeHero = getActiveHeroIntroSvg();
+          if (activeHero) {
+            playHeroIntro(activeHero);
+          } else {
+            cancelHeroIntro();
+          }
+        });
       });
     });
 
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', () => {
-      syncHeroDecoToFirstPhoto();
-      syncTimelineDecoToFourthPhoto();
-      lines.forEach(setLineStyles);
-      updateDrawLines();
-      const activeHero = getActiveHeroIntroSvg();
-      if (activeHero) {
-        playHeroIntro(activeHero);
-      } else {
-        cancelHeroIntro();
+
+    function handleLayoutResize() {
+      const layoutWidth = window.innerWidth;
+      const widthChanged = Math.abs(layoutWidth - lastLayoutSyncWidth) > 8;
+      lastLayoutSyncWidth = layoutWidth;
+
+      const isMobileFirstScreen = layoutWidth <= 576;
+      if (widthChanged || (isMobileFirstScreen && mobileFirstScreenSettled && !mobileFirstScreenLocked)) {
+        syncMobileFirstScreenLayout();
       }
-    });
+      syncTimelineDecoLines();
+      scrollLines.forEach(setLineStyles);
+      updateDrawLines();
+
+      if (!widthChanged) {
+        return;
+      }
+
+      syncHeroDecoToFirstPhoto({ force: true });
+
+      const activeHero = getActiveHeroIntroSvg();
+      if (!activeHero) {
+        cancelHeroIntro();
+        heroIntroCompletedSvg = null;
+        return;
+      }
+      if (activeHero === heroIntroCompletedSvg) {
+        ensureHeroLineDrawn(activeHero);
+        return;
+      }
+      if (activeHero === heroIntroPlayingSvg) {
+        return;
+      }
+      playHeroIntro(activeHero);
+    }
+
+    let layoutResizeTimer = 0;
+    function scheduleLayoutResize() {
+      clearTimeout(layoutResizeTimer);
+      layoutResizeTimer = setTimeout(handleLayoutResize, 220);
+    }
+
+    window.addEventListener('resize', scheduleLayoutResize);
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function bootDrawLines() {
-      syncHeroDecoToFirstPhoto();
-      syncTimelineDecoToFourthPhoto();
+      syncMobileFirstScreenLayout();
+      syncHeroDecoToFirstPhoto({ force: true });
+      syncTimelineDecoLines();
       initDrawLines();
     });
   } else {
-    syncHeroDecoToFirstPhoto();
-    syncTimelineDecoToFourthPhoto();
+    syncMobileFirstScreenLayout();
+    syncHeroDecoToFirstPhoto({ force: true });
+    syncTimelineDecoLines();
     initDrawLines();
   }
 
   window.addEventListener('load', () => {
-    syncHeroDecoToFirstPhoto();
-    syncTimelineDecoToFourthPhoto();
+    syncMobileFirstScreenLayout();
+    syncHeroDecoToFirstPhoto({ force: true });
+    syncTimelineDecoLines();
   });
 
   const timelinePhotos = document.querySelector('.timeline__photos');
   if (timelinePhotos && typeof ResizeObserver !== 'undefined') {
     const timelineDecoRo = new ResizeObserver(() => {
-      syncTimelineDecoToFourthPhoto();
+      scheduleLayoutGeometrySync({ deco: true, heroDeco: true });
     });
     timelineDecoRo.observe(timelinePhotos);
+  }
+
+  const heroContainer = document.querySelector('.hero .container');
+  if (heroContainer && typeof ResizeObserver !== 'undefined') {
+    const heroLayoutRo = new ResizeObserver(() => {
+      scheduleLayoutGeometrySync({ mobile: true, deco: true, heroDeco: true });
+    });
+    heroLayoutRo.observe(heroContainer);
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      scheduleLayoutGeometrySync({ mobile: true, deco: true, heroDeco: true });
+    });
   }
 })();
 

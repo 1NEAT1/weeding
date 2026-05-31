@@ -47,6 +47,17 @@ const GREETING_PREFIX = {
     female: 'Дорогая'
 };
 
+export function formatGuestGreetingHtml(guest) {
+    const prefix = GREETING_PREFIX[guest.type] || GREETING_PREFIX.plural;
+    const multiline = guest.names.includes(' и ') || guest.names.includes(',');
+
+    if (multiline) {
+        return `<span class="timeline__title-prefix">${prefix}</span><br><span class="timeline__title-names">${guest.names}!</span>`;
+    }
+
+    return `<span class="timeline__title-prefix">${prefix}</span> <span class="timeline__title-names">${guest.names}!</span>`;
+}
+
 export function getGuestPathFromUrl() {
     return window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
 }
@@ -61,17 +72,6 @@ export function getGuestFromUrl() {
     return GUEST_BY_PATH[path] || DEFAULT_GUEST;
 }
 
-export function formatGuestGreetingHtml(guest) {
-    const prefix = GREETING_PREFIX[guest.type] || GREETING_PREFIX.plural;
-    const multiline = guest.names.includes(' и ') || guest.names.includes(',');
-
-    if (multiline) {
-        return `${prefix} <br> ${guest.names}!`;
-    }
-
-    return `${prefix} ${guest.names}!`;
-}
-
 export function applyGuestPersonalization() {
     const guest = getGuestFromUrl();
     const titleEl = document.getElementById('timeline-guest-title');
@@ -81,5 +81,6 @@ export function applyGuestPersonalization() {
     }
 
     titleEl.innerHTML = formatGuestGreetingHtml(guest);
-    document.title = guest === DEFAULT_GUEST ? 'Wedding' : `${guest.names} — Wedding`;
+
+    window.dispatchEvent(new Event('guest-personalized'));
 }
