@@ -470,11 +470,17 @@ $photo-gap: 17px;
           bottom: -50px;
         }
       }
-
       &:nth-child(5) {
-        @media screen and (max-width: 575px) {
+        @media screen and (min-width: 366px) and (max-width: 575px) {
           display: block;
           bottom: -10px;
+        }
+      }
+
+      &:nth-child(6) {
+        @media screen and (max-width: 365px) {
+          display: block;
+          bottom: 41px;
         }
       }
     }
@@ -907,6 +913,7 @@ $photo-gap: 17px;
       color: #594236;
       margin: 30px 0 33px 0;
       -webkit-text-stroke: 1px #594236;
+      letter-spacing: 0.03em;
 
       @media screen and (max-width: 992px) {
         font-size: 62px;
@@ -1151,7 +1158,7 @@ $photo-gap: 17px;
     font-family: $font-doppelganger;
     text-align: center;
     -webkit-text-stroke: 1px #594236;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
 
     @media screen and (max-width: 1200px) {
       font-size: 50px;
@@ -1280,7 +1287,7 @@ $photo-gap: 17px;
     text-align: center;
     margin-bottom: 60px;
     -webkit-text-stroke: 0.8px #594236;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
 
     @media screen and (max-width: 1200px) {
       font-size: 50px;
@@ -1324,78 +1331,77 @@ $photo-gap: 17px;
       grid-auto-rows: auto;
     }
   }
+ &__content {
+      // Отступы также масштабируются относительно ширины карточки
+    padding: 115px 0 0 59px;
+    padding: clamp(60px, 25.56cqi, 115px) 0 0 clamp(20px, 13.11cqi, 59px);
+    
+      @media screen and (max-width: 576px) {
+    padding: 65px 0 0 30px;     // уменьшенный отступ под новый размер
+    }
+  }
 
-  &__item {
+ &__item {
+    // Делаем карточку контейнером для container queries
+    container-type: inline-size;
+    container-name: details-card;
+
     background-image: url('../images/cardflower.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 15px;
     box-shadow: 0 16px 18px -10px rgba(0, 0, 0, 0.45);
-    $item: &;
+
     width: 100%;
     max-width: 450px;
+    // Сохраняем пропорции карточки (450/404 ≈ 1.1139)
+    aspect-ratio: 450 / 404;
+    box-sizing: border-box;
 
-    @media screen and (max-width: 576px) {
-      width: 100%;
-      max-width: none;
-      min-height: 360px;
-      height: auto;
+ @media screen and (max-width: 576px) {
+      width: 80%;                  // как в location
+      max-width: 470px;            // как в location
+      height: 300px;               // фиксированная высота, как в location
+      min-height: auto;            // убираем предыдущий min-height
+      margin: 0 auto;              // центрируем (в location они и так в колонке)
+      aspect-ratio: auto; // убираем принудительное соотношение, т.к. высота фиксирована
     }
+  
+    $item: &;
 
+    // Заголовок
     &-title {
+      // Базовый размер для старых браузеров
       font-size: 47px;
+      // Пропорциональное масштабирование: 47px / 450px * 100cqi ≈ 10.44cqi
+      font-size: clamp(37px, 10.44cqi, 47px);
       color: #FFF8EC;
       font-family: $font-doppelganger;
       margin-bottom: 17px;
       max-width: 150px;
       -webkit-text-stroke: 0.2px #FFF8EC;
       letter-spacing: 0.08em;
-
-      @media screen and (max-width: 576px) {
-        font-size: 37px;
-        -webkit-text-stroke: 0.4px #FFF8EC;
-      }
     }
 
-    &:first-child {
-      #{$item}-text {
-        max-width: 325px;
-
-        @media screen and (max-width: 576px) {
-          max-width: 290px;
-        }
-      }
-    }
-
-    &:last-child {
-      #{$item}-text {
-        max-width: 280px;
-
-        @media screen and (max-width: 576px) {
-          max-width: 250px;
-        }
-      }
-    }
-
+    // Текст
     &-text {
       font-size: 18px;
+      font-size: clamp(13px, 4cqi, 18px); // 18/450*100 = 4cqi
       color: #FFF8EC;
       font-family: $font-gilroy;
       line-height: 1.5;
       opacity: 0.7;
 
-      @media screen and (max-width: 576px) {
-        font-size: 13px;
+      // Ограничения ширины текстовых блоков
+      #{$item}:first-child & {
+        max-width: 325px;
+        max-width: 72.22cqi; // 325/450*100 ≈ 72.22
       }
-    }
-  }
-
-  &__content {
-    padding: 115px 0 0 59px;
-
-    @media screen and (max-width: 576px) {
-      padding: 85px 0 0 30px;
+      #{$item}:last-child & {
+        max-width: 280px;
+        max-width: 62.22cqi; // 280/450*100 ≈ 62.22
+      }
     }
   }
 }
@@ -1430,7 +1436,7 @@ $photo-gap: 17px;
     font-family: $font-doppelganger;
     text-align: center;
     -webkit-text-stroke: 1px #594236;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
 
     @media screen and (max-width: 1200px) {
       font-size: 50px;
@@ -1928,6 +1934,7 @@ $photo-gap: 17px;
       line-height: 1.5;
       box-sizing: border-box;
       justify-content: center;
+      padding: 30px; 
     }
 
     &-text {
@@ -1939,11 +1946,7 @@ $photo-gap: 17px;
       padding-top: 20px;
 
       @media screen and (max-width: 576px) {
-        font-size: 19px;
-      }
-
-      @media screen and (max-width: 576px) {
-        font-size: 15px;
+        font-size: 14px;
         max-width: 242px;
         padding-top: 35px;
       }
@@ -1971,13 +1974,14 @@ $photo-gap: 17px;
       -webkit-text-stroke: 0.3px #594236;
       letter-spacing: 0.08em;
 
+
       @media screen and (max-width: 922px) {
         font-size: 14px;
       }
 
       @media screen and (max-width: 576px) {
         margin-top: 30px;
-        font-size: 13px;
+        font-size: 12px;
       }
 
       &:hover {
@@ -2077,7 +2081,6 @@ $photo-gap: 17px;
   }
 }
 
-/* Алерт валидации анкеты — фиксирован к окну, не к форме */
 .guest__alert {
   display: block;
   position: fixed;
@@ -2182,7 +2185,6 @@ $photo-gap: 17px;
   }
 }
 
-/* AOS: один скролл, transform не раздувает страницу */
 [data-aos='fade-up'] {
   transform: translate3d(0, 48px, 0);
 }
