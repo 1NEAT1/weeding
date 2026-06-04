@@ -232,6 +232,8 @@ $photo-gap: 17px;
 
     @media screen and (max-width: 576px) {
       font-size: 60px;
+      top: 71px;
+      line-height: 1;
     }
   }
 
@@ -243,11 +245,12 @@ $photo-gap: 17px;
     letter-spacing: 0.09em;
     line-height: 0.5;
     color: #594236;
-    opacity: 0.25;
+    opacity: 0.17;
     -webkit-text-stroke: 5px #594236;
     paint-order: stroke fill;
-    bottom: 75px;
+    bottom: 80px;
     left: 135px;
+
 
     @media screen and (max-width: 576px) {
       -webkit-text-stroke: 3px #594236;
@@ -271,6 +274,7 @@ $photo-gap: 17px;
 
       @media screen and (max-width: 576px) {
         left: 93px;
+        line-height: 1.1;
       }
     }
 
@@ -286,12 +290,13 @@ $photo-gap: 17px;
 
     @media screen and (max-width: 768px) {
       font-size: 45px;
-      bottom: 10px;
+      bottom: 21px;
+      -webkit-text-stroke: 3px #594236;
     }
 
     @media screen and (max-width: 576px) {
       font-size: 37px;
-      bottom: -7px;
+      bottom: 3px;
     }
   }
 }
@@ -844,7 +849,8 @@ $photo-gap: 17px;
 
       @media screen and (max-width: 576px) {
         max-width: calc(100% - 24px);
-        padding-inline: 12px;
+        
+        line-height: 1.36;
       }
     }
   }
@@ -1332,17 +1338,17 @@ $photo-gap: 17px;
     }
   }
  &__content {
-      // Отступы также масштабируются относительно ширины карточки
+
     padding: 115px 0 0 59px;
     padding: clamp(60px, 25.56cqi, 115px) 0 0 clamp(20px, 13.11cqi, 59px);
     
       @media screen and (max-width: 576px) {
-    padding: 65px 0 0 30px;     // уменьшенный отступ под новый размер
+    padding: 65px 0 0 30px;  
     }
   }
 
  &__item {
-    // Делаем карточку контейнером для container queries
+
     container-type: inline-size;
     container-name: details-card;
 
@@ -1355,26 +1361,24 @@ $photo-gap: 17px;
 
     width: 100%;
     max-width: 450px;
-    // Сохраняем пропорции карточки (450/404 ≈ 1.1139)
+
     aspect-ratio: 450 / 404;
     box-sizing: border-box;
 
  @media screen and (max-width: 576px) {
-      width: 80%;                  // как в location
-      max-width: 470px;            // как в location
-      height: 300px;               // фиксированная высота, как в location
-      min-height: auto;            // убираем предыдущий min-height
-      margin: 0 auto;              // центрируем (в location они и так в колонке)
-      aspect-ratio: auto; // убираем принудительное соотношение, т.к. высота фиксирована
+      width: 80%; 
+      max-width: 470px;
+      height: 300px; 
+      min-height: auto; 
+      margin: 0 auto; 
+      aspect-ratio: auto; 
     }
   
     $item: &;
 
-    // Заголовок
     &-title {
-      // Базовый размер для старых браузеров
+
       font-size: 47px;
-      // Пропорциональное масштабирование: 47px / 450px * 100cqi ≈ 10.44cqi
       font-size: clamp(37px, 10.44cqi, 47px);
       color: #FFF8EC;
       font-family: $font-doppelganger;
@@ -1384,23 +1388,21 @@ $photo-gap: 17px;
       letter-spacing: 0.08em;
     }
 
-    // Текст
     &-text {
       font-size: 18px;
-      font-size: clamp(13px, 4cqi, 18px); // 18/450*100 = 4cqi
+      font-size: clamp(13px, 4cqi, 18px);
       color: #FFF8EC;
       font-family: $font-gilroy;
       line-height: 1.5;
       opacity: 0.7;
 
-      // Ограничения ширины текстовых блоков
       #{$item}:first-child & {
         max-width: 325px;
-        max-width: 72.22cqi; // 325/450*100 ≈ 72.22
+        max-width: 72.22cqi; 
       }
       #{$item}:last-child & {
         max-width: 280px;
-        max-width: 62.22cqi; // 280/450*100 ≈ 62.22
+        max-width: 80.22cqi;
       }
     }
   }
@@ -1553,14 +1555,14 @@ $photo-gap: 17px;
     }
 
     .form-input {
-      width: 452px;
+      width: 433px;
       max-width: 100%;
       border: none;
       border-bottom: 1px solid #594236;
       outline: none;
       padding: 10px 0;
       font-family: $font-gilroy, serif;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       color: #594236;
       background-color: transparent;
@@ -1568,6 +1570,7 @@ $photo-gap: 17px;
       &::placeholder {
         color: rgba(89, 66, 54, 0.5);
         font-family: inherit;
+        opacity: 0.4;
       }
 
       &:focus {
@@ -1920,6 +1923,8 @@ $photo-gap: 17px;
     }
 
     &-card {
+      position: relative;
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1935,6 +1940,8 @@ $photo-gap: 17px;
       box-sizing: border-box;
       justify-content: center;
       padding: 30px; 
+      border-radius: 15px;
+      overflow: hidden;
     }
 
     &-text {
@@ -1951,6 +1958,12 @@ $photo-gap: 17px;
         padding-top: 35px;
       }
 
+      @media screen and (max-width: 399px) {
+        font-size: 14px;
+        max-width: 242px;
+        padding-top: 0px;
+      }
+
       span {
         color: #594236;
         font-weight: bold;
@@ -1959,20 +1972,22 @@ $photo-gap: 17px;
     }
 
     &-button {
-      margin-top: 45px;
-      display: inline-block;
-      padding: 17px 72px;
-      background-color: #CCDDE2;
-      color: #594236;
-      font-family: $font-gilroy;
-      font-size: 15px;
-      text-decoration: none;
-      border-radius: 15px;
-      box-shadow: 0 6px 18px rgba(89, 66, 54, 0.25);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      -webkit-text-stroke: 0.3px #594236;
-      letter-spacing: 0.08em;
+    margin-top: clamp(10px, 4cqi, 30px);
+    display: inline-block;
+    padding: clamp(12px, 3cqi, 17px) clamp(40px, 14cqi, 72px);
+    background-color: #CCDDE2;
+    color: #594236;
+    font-family: $font-gilroy;
+    font-size: clamp(12px, 3cqi, 15px);
+    text-decoration: none;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(89, 66, 54, 0.25);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    -webkit-text-stroke: 0.3px #594236;
+    letter-spacing: 0.08em;
+    position: relative;
+    z-index: 1;
 
 
       @media screen and (max-width: 922px) {
@@ -1981,6 +1996,11 @@ $photo-gap: 17px;
 
       @media screen and (max-width: 576px) {
         margin-top: 30px;
+        font-size: 12px;
+      }
+
+      @media screen and (max-width: 399px) {
+        margin-top: 20px;
         font-size: 12px;
       }
 
