@@ -2,15 +2,31 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { GUEST_PATHS, getPageMeta } = require('./site-meta.config');
 
 module.exports = (env, argv) => {
   const isProd = argv.mode === 'production';
+  const htmlTemplate = path.join(__dirname, 'src', 'index.html');
+
+  const htmlPlugins = [
+    new HtmlWebpackPlugin({
+      template: htmlTemplate,
+      filename: 'index.html',
+      templateParameters: getPageMeta(),
+    }),
+    ...GUEST_PATHS.map((slug) => new HtmlWebpackPlugin({
+      template: htmlTemplate,
+      filename: `${slug}/index.html`,
+      templateParameters: getPageMeta(slug),
+    })),
+  ];
 
   return {
     entry: './src/index.js',
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: isProd ? '[name].[contenthash].js' : '[name].js',
+      publicPath: '/',
       clean: true,
     },
     module: {
@@ -51,9 +67,7 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      new HtmlWebpackPlugin({
-        template: path.join(__dirname, 'src', 'index.html'),
-      }),
+      ...htmlPlugins,
       ...(isProd
         ? [
             new MiniCssExtractPlugin({
@@ -67,7 +81,15 @@ module.exports = (env, argv) => {
       compress: true,
       port: 8081,
       hot: true,
-      historyApiFallback: true,
+      historyApiFallback: {
+        rewrites: [
+          ...GUEST_PATHS.map((slug) => ({
+            from: new RegExp(`^/${slug}/?$`),
+            to: `/${slug}/index.html`,
+          })),
+          { from: /./, to: '/index.html' },
+        ],
+      },
       watchFiles: ['src/**/*'],
     },
     devtool: isProd ? 'source-map' : 'eval-source-map',

@@ -9,12 +9,12 @@
  * /vitaly-elizaveta  — Виталий и Елизавета
  * /dmitry-alina      — Дмитрий и Алина
  * /igor-darya        — Игорь и Дарья
- * /elizaveta-german  — Елизавета и Герман
+ * /german-elizaveta  — Елизавета и Герман
  * /irina-evgeny      — Ирина и Евгений
  * /family            — Александр, Светлана, Эвелина и Роман
  * /nadezhda          — Надежда
  * /zahar             — Захар
- * /aleksandr         — Александр
+ * /alexandr          — Александр
  * /anton             — Антон
  * /natalya           — Наталья
  *
@@ -29,7 +29,7 @@ export const GUEST_BY_PATH = {
     'vitaly-elizaveta': {type: 'plural', names: 'Виталий и Елизавета'},
     'dmitry-alina': {type: 'plural', names: 'Дмитрий и Алина'},
     'igor-darya': {type: 'plural', names: 'Игорь и Дарья'},
-    'elizaveta-german': {type: 'plural', names: 'Елизавета и Герман'},
+    'german-elizaveta': {type: 'plural', names: 'Елизавета и Герман'},
     'irina-evgeny': {type: 'plural', names: 'Ирина и Евгений'},
     family: {type: 'plural', names: 'Александр, Светлана, Эвелина и Роман'},
     nadezhda: {type: 'female', names: 'Надежда'},
